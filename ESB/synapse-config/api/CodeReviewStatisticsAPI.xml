@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/CodeReviewStatisticsAPI" name="CodeReviewStatisticsAPI"
+  port="8245" xmlns="http://ws.apache.org/ns/synapse">
+  <resource inSequence="getCodeReviewStatistics" methods="POST GET"
+    protocol="https" uri-template="/getCodeReviewStatistics/{year}/{sender}/{team}">
+    <outSequence/>
+    <faultSequence/>
+  </resource>
+  <resource inSequence="codeReviewList" methods="POST GET"
+    protocol="https" uri-template="/getCodeReviewList/{sender}/{team}">
+    <outSequence/>
+    <faultSequence/>
+  </resource>
+  <resource inSequence="codeReviewByMailId" methods="POST GET"
+    protocol="https" uri-template="/codeReviewByMailId/{mailId}">
+    <outSequence/>
+    <faultSequence/>
+  </resource>
+</api>

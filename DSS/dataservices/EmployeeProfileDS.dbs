@@ -1,0 +1,21 @@
+<data name="EmployeeProfileDS" transports="https">
+   <description>Expose employee visa information to engineering profile app&#xd;                                &#xd;                                </description>
+   <config enableOData="false" id="allocationAppDB">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://192.168.56.212:3306/allocation_db?autoReconnect=true</property>
+      <property name="username">root</property>
+      <property name="password">password</property>
+   </config>
+   <query id="getVisaInfoByEmail" useConfig="allocationAppDB">
+      <sql>SELECT country, end_date FROM employee_profile_visa_info WHERE email=:email AND end_date&gt;CURDATE() ORDER BY end_date</sql>
+      <result outputType="json">{"Visas":{"Visa":[{"country":"$country","end_date":"$end_date"}]}}</result>
+      <param name="email" sqlType="STRING"/>
+   </query>
+   <resource method="GET" path="/employee/visa/{email}">
+      <call-query href="getVisaInfoByEmail">
+         <with-param name="email" query-param="email"/>
+      </call-query>
+   </resource>
+   <!-- <enableSec/>
+   <policy key="conf:security/engineeringprofilepolicy.xml"/> -->
+</data>

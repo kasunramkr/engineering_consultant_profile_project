@@ -1,0 +1,6 @@
+<api xmlns="http://ws.apache.org/ns/synapse" name="getLeaveSummaryAPI" context="/getLeaveSummary" port="8245">
+   <resource methods="POST GET" uri-template="/{engineerEmail}/{year}" protocol="https" inSequence="getLeaveSummary"/>
+   <handlers>
+       <handler class="org.wso2.rest.BasicAuthHandler"/>
+    </handlers>
+</api>

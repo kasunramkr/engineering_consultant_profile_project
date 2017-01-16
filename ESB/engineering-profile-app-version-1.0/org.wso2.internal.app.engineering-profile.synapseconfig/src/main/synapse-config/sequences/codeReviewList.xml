@@ -1,0 +1,25 @@
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="codeReviewList" trace="disable">
+  <property xmlns:ns="http://org.apache.synapse/xsd" expression="get-property('DSS_SEC')" name="usp" scope="default" type="STRING"/>
+  <property xmlns:ns="http://org.apache.synapse/xsd" expression="get-property('uri.var.sender')" name="sender" scope="default" type="STRING"/>
+  <property xmlns:ns="http://org.apache.synapse/xsd" expression="get-property('uri.var.team')" name="team" scope="default" type="STRING"/>
+  <!-- getting the code review list from database-->
+  <payloadFactory media-type="xml">
+    <format>
+      <p:getCodeReviewList xmlns:p="http://ws.wso2.org/dataservice">
+        <xs:team xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:team>
+        <xs:sender xmlns:xs="http://ws.wso2.org/dataservice">$2</xs:sender>
+      </p:getCodeReviewList>
+    </format>
+    <args>
+      <arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml" expression="get-property('team')"/>
+      <arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml" expression="get-property('sender')"/>
+    </args>
+  </payloadFactory>
+  <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+  <property xmlns:ns="http://org.apache.synapse/xsd" expression="fn:concat('Basic ', base64Encode($ctx:usp))" name="Authorization" scope="transport" type="STRING"/>
+  <call blocking="true">
+    <endpoint key="getCodeReviewList"/>
+  </call>
+  <property name="messageType" scope="axis2" type="STRING" value="application/json"/>
+  <respond/>
+</sequence>

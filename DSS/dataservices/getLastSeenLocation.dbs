@@ -1,0 +1,20 @@
+<data name="getLastSeenLocation" transports="https">
+   <config enableOData="false" id="RADIUS_DB">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://192.168.56.113:3306/radius?autoReconnect=true</property>
+      <property name="username">admin</property>
+      <property name="password">admin</property>
+   </config>
+   <query id="getLastSeenLocation" useConfig="RADIUS_DB">
+      <sql>select acctstarttime,acctstoptime,floor,office,area from radacct join location on radacct.calledstationid=location.calledstationid where username=:username order by acctstarttime DESC LIMIT 1</sql>
+      <result outputType="json">{"Entry":{"acctstarttime":"$acctstarttime","acctstoptime":"$acctstoptime","floor":"$floor","office":"$office","area":"$area"}}</result>
+      <param name="username" sqlType="STRING"/>
+   </query>
+   <resource method="GET" path="/location/{username}">
+      <call-query href="getLastSeenLocation">
+         <with-param name="username" query-param="username"/>
+      </call-query>
+   </resource>
+   <!-- <enableSec/>
+   <policy key="conf:security/engineeringprofilepolicy.xml"/> -->
+</data>

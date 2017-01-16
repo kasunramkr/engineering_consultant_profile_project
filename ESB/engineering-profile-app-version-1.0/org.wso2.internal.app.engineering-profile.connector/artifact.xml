@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><artifacts>
+    <artifact name="gmail-connector" groupId="com.example.org.wso2.internal.app.engineering-profile.connector.lib" version="3.0.0" type="synapse/lib" serverRole="EnterpriseServiceBus">
+        <file>gmail-connector-3.0.0.zip</file>
+    </artifact>
+</artifacts>

@@ -1,0 +1,814 @@
+<!--
+~   Copyright (c) 2005-2016, WSO2 Inc. (http://wso2.org) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
+<%
+var CSS_LIBS = [
+    "libs/animate/animate.css",
+    "libs/bootstrap3-editable/css/bootstrap-editable.css",
+    "libs/flags/flags.css" 
+    ];
+include('header.jag');
+%>
+<!-- breadcrumb -->
+<div class="breadcrumb-wrapper clearfix">
+    <ol class="breadcrumb pull-left">
+        <li>
+            <a href="index.jag">
+                <i class="icon fw fw-home">
+                </i>
+                <span class="hidden-xs">
+                    Home
+                </span>
+            </a>
+        </li>
+        <li class="user hidden-xs">
+            <i class="icon fw fw-user">
+            </i>
+            <span id="breadCrumEmpName">
+            </span>
+        </li>
+        <li class="active">
+            Dashboard
+        </li>
+    </ol>
+    <div class="breadcrumb pull-right">
+        <form style="margin: 2%;">
+            <input class="form-control engineers" id="engineers" placeholder="Search name or e-mail address" type="text" style="width: 100%;"/>
+        </form>
+    </div>
+    <!--
+            <ul class="notes pull-right">
+                <li class="btn-notes">
+                    <a aria-expanded="false" data-container=".breadcrumb-wrapper" data-target="#right-sidebar" data-toggle="sidebar">
+                        <span class="icon fw-stack">
+                            <i class="fw fw-google-docs fw-stack-1x">
+                            </i>
+                        </span>
+                        <span>
+                            Notes
+                        </span>
+                    </a>
+                </li>
+            </ul>
+            -->
+</div>
+<div class="container-fluid dashboard">
+    <!--
+            <!- - .right-sidebar - ->
+            <div class="sidebar-wrapper sidebar-options" data-side="right" data-width="320" id="right-sidebar">
+                <button aria-expanded="true" class="btn btn-default close-handle close-sidebar" data-container=".breadcrumb-wrapper" data-container-divide="true" data-handle="close" data-target="#right-sidebar" data-toggle="sidebar" onclick="updateSidebarOptions()" rel="show-options">
+                    <i class="fw fw-right-arrow">
+                    </i>
+                </button>
+                <!- - Nav tabs - ->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="active" role="presentation">
+                        <a aria-controls="personal" data-toggle="tab" href="#personal" role="tab">
+                            Personal
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a aria-controls="shared" data-toggle="tab" href="#shared" role="tab">
+                            Shared
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a aria-controls="others" data-toggle="tab" href="#others" role="tab">
+                            By Others
+                        </a>
+                    </li>
+                </ul>
+                <!- - Tab panes - ->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="personal" role="tabpanel">
+                        <div class="actionBar clearfix" id="actionBar">
+                            <a class="" href="" id="enableEdit">
+                                <span class="icon fw-stack">
+                                    <i class="icon fw fw-edit fw-stack-1x">
+                                    </i>
+                                </span>
+                                <span>
+                                    Edit
+                                </span>
+                            </a>
+                            <a href="" id="cancelEdit" style="display:none">
+                                <span class="icon fw-stack">
+                                    <i class="icon fw fw-cancel fw-stack-1x">
+                                    </i>
+                                </span>
+                                <span>
+                                    Cancel Edit
+                                </span>
+                            </a>
+                            <a href="" id="saveEdit" style="display:none">
+                                <span class="icon fw-stack">
+                                    <i class="icon fw fw-save fw-stack-1x">
+                                    </i>
+                                </span>
+                                <span>
+                                    Save
+                                </span>
+                            </a>
+                        </div>
+                        <div class="content noteCon" id="fr1">
+                            <h2>
+                                Skill Gap Analysis
+                            </h2>
+                            <p>
+                                <strong>
+                                    Technical
+                                </strong>
+                                <br>
+                                    More experience in architecture and architecture platform level
+                                </br>
+                            </p>
+                            <p>
+                                <strong>
+                                    Non Technical
+                                </strong>
+                                <br>
+                                    Has to be more ascertive in communication
+                                </br>
+                            </p>
+                            <p>
+                                <strong>
+                                    Customer Engagement
+                                </strong>
+                                <br>
+                                    Need to go on a few QSPs as a Lead
+                                </br>
+                            </p>
+                            <br>
+                                <h2>
+                                    Notes
+                                </h2>
+                                <p>
+                                    Has great platform knowledge. Need to send him on a QSP as a lead test.
+                                </p>
+                                <p>
+                                    Has been given Robbins Brothers account to cleanup and handle.
+                                </p>
+                            </br>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="shared" role="tabpanel">
+                        <div class="actionBar" id="actionBar2">
+                            <a class="" href="" id="enableEdit2">
+                                <span class="icon fw-stack">
+                                    <i class="icon fw fw-edit fw-stack-1x">
+                                    </i>
+                                </span>
+                                <span>
+                                    Edit
+                                </span>
+                            </a>
+                            <a href="" id="cancelEdit2" style="display:none">
+                                <span class="icon fw-stack">
+                                    <i class="icon fw fw-cancel fw-stack-1x">
+                                    </i>
+                                </span>
+                                <span>
+                                    Cancel Edit
+                                </span>
+                            </a>
+                            <a href="" id="saveEdit2" style="display:none">
+                                <span class="icon fw-stack">
+                                    <i class="icon fw fw-save fw-stack-1x">
+                                    </i>
+                                </span>
+                                <span>
+                                    Save
+                                </span>
+                            </a>
+                        </div>
+                        <div class="content noteCon" id="fr2">
+                            <p>
+                                Has great platform knowledge. Need to send him on a QSP as a lead test.
+                            </p>
+                            <p>
+                                Has been given Robbins Brothers account to cleanup and handle.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="others" role="tabpanel">
+                        <div aria-multiselectable="true" class="panel-group smart-accordion-default" id="accordion" role="tablist">
+                            <div class="panel panel-default">
+                                <div class="panel-heading" id="headingOne" role="tab">
+                                    <h4 class="panel-title">
+                                        <a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" role="button">
+                                            <i class="fw fw-down pull-right">
+                                            </i>
+                                            <i class="fw fw-up pull-right">
+                                            </i>
+                                            Sam
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div aria-labelledby="headingOne" class="panel-collapse collapse in" id="collapseOne" role="tabpanel">
+                                    <div class="panel-body">
+                                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading" id="headingTwo" role="tab">
+                                    <h4 class="panel-title">
+                                        <a aria-controls="collapseTwo" aria-expanded="false" class="collapsed" data-parent="#accordion" data-toggle="collapse" href="#collapseTwo" role="button">
+                                            <i class="fw fw-down pull-right">
+                                            </i>
+                                            <i class="fw fw-up pull-right">
+                                            </i>
+                                            Jane
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div aria-labelledby="headingTwo" class="panel-collapse collapse" id="collapseTwo" role="tabpanel">
+                                    <div class="panel-body">
+                                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading" id="headingThree" role="tab">
+                                    <h4 class="panel-title">
+                                        <a aria-controls="collapseThree" aria-expanded="false" class="collapsed" data-parent="#accordion" data-toggle="collapse" href="#collapseThree" role="button">
+                                            <i class="fw fw-down pull-right">
+                                            </i>
+                                            <i class="fw fw-up pull-right">
+                                            </i>
+                                            David
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div aria-labelledby="headingThree" class="panel-collapse collapse" id="collapseThree" role="tabpanel">
+                                    <div class="panel-body">
+                                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!- - /.right-sidebar - ->
+    -->
+    <!-- general details -->
+    <div class="row generalDetails">
+        <div class="col-sm-8 col-md-7 col-lg-5 col-xl-4 clearfix profileDetail">
+            <div class="profile-pic-wrap pull-left">
+                <img alt="Profile picture" id="profilePicImg" src="images/default_prof-pic.png">
+                    <div class="profile-detail">
+                        <a data-placement="right" data-toggle="tooltip" href="#" id="empNameToolTip">
+                            <h4 id="empName">
+                            </h4>
+                        </a>
+                        <!-- <p id="empWorkEmail"></p> -->
+                        <p id="empJobRole">
+                        </p>
+                    </div>
+                </img>
+            </div>
+            <form class="form-horizontal pull-left teamDetail">
+                <div id="peopleHRGeneralDetails">
+                    <div class="form-group">
+                        <label class="col-xs-6 col-sm-4 control-label">
+                            Employee ID:
+                        </label>
+                        <div class="col-xs-6 col-sm-8">
+                            <p class="form-control-static" id="empID">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-6 col-sm-4 control-label">
+                            Work Email:
+                        </label>
+                        <div class="col-xs-6 col-sm-8">
+                            <p class="form-control-static" id="empWorkEmail">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-6 col-sm-4 control-label">
+                            Joined:
+                        </label>
+                        <div class="col-xs-6 col-sm-8">
+                            <p class="form-control-static" id="empJoinedDate">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-6 col-sm-4 control-label">
+                            Department:
+                        </label>
+                        <div class="col-xs-6 col-sm-8">
+                            <p class="form-control-static" id="empDepartment">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-6 col-sm-4 control-label">
+                            Team:
+                        </label>
+                        <div class="col-xs-6 col-sm-8">
+                            <p class="form-control-static" id="empTeam">
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-6 col-sm-4 col-lg-4 col-xl-4 control-label">
+                        Commitership:
+                    </label>
+                    <div class="col-xs-6 col-sm-8 col-lg-8 col-xl-8" id="commitershipDiv">
+                        <a data-pk="1" data-type="select" data-url="" href="#" id="commitership">
+                        </a>
+                    </div>
+                </div>
+                <!-- <div class="form-group" id="otherProductDiv">
+                            <label class="col-sm-12 control-label">
+                                Other Product Competencies:
+                            </label>
+                            <div class="col-sm-12">
+                                <a class="" data-pk="1" data-type="textarea" data-url="" href="#" id="productCom">
+                                    DS, MB, GReg
+                                </a>
+                            </div>
+                        </div>
+                -->
+            </form>
+        </div>
+        <div class="col-sm-4 col-md-5 col-lg-2 visa col-xl-3">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h5 id="visaTopic">
+                        Available Visa Details
+                    </h5>
+                    <table class="table table-striped table-bordered table-hover table-condensed nowrap" id="visa">
+                        <tr>
+                            <th>
+                                Country
+                            </th>
+                            <th>
+                                Valid Till
+                            </th>
+                        </tr>
+                    </table>
+                    <a class="popper" data-toggle="popover" id="otherCountries">
+                    </a>
+                    <div class="popper-content hide visa">
+                        <table class="table table-striped table-bordered table-hover table-condensed" id="visaHover">
+                            <tr>
+                                <th>
+                                    Country
+                                </th>
+                                <th>
+                                    Valid Till
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div align="right" class="col-sm-12 col-lg-5 col-xl-5 productReleases" id="locationDiv">
+            <h5>
+                Current Location
+            </h5>
+            <div class="nowrap" id="map">
+            </div>
+            <p class="strongM" id="currentLocationString">
+            </p>
+        </div>
+    </div>
+    <!--
+            <!- - QSP  - ->
+            <div class="row box QSP">
+                <div class="col-sm-6 col-md-7 content-wrap" id="qspDiv">
+                    <div class="content-header">
+                        <h5>
+                            Latest QSP Details
+                        </h5>
+                        <a class="content-header-btn pull-right" href="qsp.jag">
+                            View All
+                        </a>
+                    </div>
+                    <div class="content-body">
+                        <div class="row">
+                            <div class="form-inline">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>
+                                            Time Period:
+                                        </label>
+                                        <p class="form-control-static" id="date">
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>
+                                            Client:
+                                        </label>
+                                        <p class="form-control-static" id="client">
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>
+                                            Role:
+                                        </label>
+                                        <p class="form-control-static roleIcon con2icon" id="role">
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <label>
+                            Feedback
+                        </label>
+                        <table class="table table-striped table-bordered table-hover table-condensed" id="myTable">
+                            <tr>
+                                <th>
+                                    QSP Feedback as Lead
+                                </th>
+                                <th>
+                                    QSP Feedback as Consultant
+                                </th>
+                                <th>
+                                    Recommended by
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div id="supportDiv" class="col-sm-6 col-md-5 content-wrap supportFeedback">
+                    <div class="content-header">
+                        <h5>
+                            Latest Support Feedback
+                        </h5>
+                        <a class="content-header-btn pull-right" href="support_feedback.jag">
+                            View All
+                        </a>
+                    </div>
+                    <div class="content-body">
+                        <div class="clearfix">
+                            <div class="support-rating pull-left">
+                                <div class="leads">
+                                    <span class="leadsRating">
+                                        4
+                                    </span>
+                                    <ul>
+                                        <li class="fill">
+                                            <i aria-hidden="true" class="fa fa-star">
+                                            </i>
+                                        </li>
+                                        <li class="fill">
+                                            <i aria-hidden="true" class="fa fa-star">
+                                            </i>
+                                        </li>
+                                        <li class="fill">
+                                            <i aria-hidden="true" class="fa fa-star">
+                                            </i>
+                                        </li>
+                                        <li class="fill">
+                                            <i aria-hidden="true" class="fa fa-star">
+                                            </i>
+                                        </li>
+                                        <li>
+                                            <i aria-hidden="true" class="fa fa-star-o">
+                                            </i>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <span class="avg">
+                                    Avg: 3
+                                </span>
+                            </div>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ornare ante vel nunc feugiat gravida. Sed in neque a ligula euismod scelerisque. Sed in neque a ligula euismod scelerisque. Nunc facilisis sem orci, quis lacinia eros scelerisque eget. Sed in neque a ligula euismod scelerisque.
+                            </p>
+                        </div>
+                        <div class="row">
+                            <div class="form-inline">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="xm-inline">
+                                            Potential Support Lead:
+                                        </label>
+                                        <p class="form-control-static xm-inline">
+                                            Yes
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="xm-inline">
+                                            Feedback by:
+                                        </label>
+                                        <p class="form-control-static xm-inline">
+                                            Sam
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!- - QSP and support - ->
+    -->
+    <!-- Charts -->
+    <div class="row box2">
+        <!-- Client Engagement -->
+        <div class="col-sm-6 col-md-6 col-lg-3 content-wrap divEq">
+            <div class="content-header">
+                <h5>
+                    Client Engagement Weeks
+                </h5>
+                <a class="content-header-btn pull-right" href="client.jag" id="clientEngagementDivViewAll">
+                    View All
+                </a>
+            </div>
+            <div class="content-body" id="clientEngagementDiv">
+                <table class="table table-striped table-bordered table-condensed CEdata text-right nowrap" id="ClientEngTable">
+                    <tr>
+                        <th>
+                            Type
+                        </th>
+                        <th class="text-right" id="nextYear">
+                        </th>
+                        <th class="text-right" id="currentYear">
+                        </th>
+                        <!--<th>Old</th>-->
+                        <th class="text-right">
+                            Total
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+                            Training
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <!--<td></td>-->
+                        <td class="strongM" id="tTotal">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+                            Consulting
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <!--<td></td>-->
+                        <td class=" strongM" id="cTotal">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+                            POC
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <!--<td></td>-->
+                        <td class="strongM" id="pocTotal">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+                            Quick Start
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <!--<td></td>-->
+                        <td class="strongM" id="qspTotal">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+                            Customer Firefighting
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <!--<td></td>-->
+                        <td class="strongM" id="fireTotal">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">
+                            Pre-Sale Engagement
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <!--<td></td>-->
+                        <td class="strongM" id="salesTotal">
+                        </td>
+                    </tr>
+                    <tr class="tfooter">
+                        <td class="text-left">
+                            Total
+                        </td>
+                        <td id="nextTotal">
+                        </td>
+                        <td id="currentTotal">
+                        </td>
+                        <!--<td id="oldTotal"></td>-->
+                        <td id="finalTotal">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- Code Review -->
+        <div class="col-sm-6 col-md-6 col-lg-3 codeReview content-wrap divEq">
+            <div class="content-header">
+                <h5>
+                    Code Review Statistics
+                </h5>
+                <a class="content-header-btn pull-right" href="code_review.jag" id="codeReviewViewAll">
+                    View All
+                </a>
+            </div>
+            <div class="content-body" id="codeReview">
+                <div class="col-md-12 " id="dChart">
+                </div>
+                <div class="form-inline">
+                    <div class="form-group" id="yearSelection">
+                        <label class="xm-inline">
+                            Year:
+                        </label>
+                        <select class="form-control xm-inline" id="yearForCodeReviews">
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="visible-sm visible-md clearfix">
+        </div>
+        <!-- JIRA Assigned, Open, In-Progress and Reported Bug Summary-->
+        <div class="col-sm-6 col-md-6 col-lg-3 content-wrap divEq">
+            <div class="content-header">
+                <h5>
+                    JIRA Assigned and Reported Bug Summary
+                </h5>
+                <a class="content-header-btn pull-right" href="https://wso2.org/jira/secure/Dashboard.jspa" target="blank" id="jiraAssignedURL">
+                    Detail
+                </a>
+            </div>
+            <div class="content-body">
+                <div class="col-md-12 " id="jChart">
+                </div>
+            </div>
+        </div>
+        <!-- JIRA Resolved bug summary -->
+        <div class="col-sm-6 col-md-6 col-lg-3 content-wrap divEq">
+            <div class="content-header">
+                <h5>
+                    JIRA Resolved Bug Summary
+                </h5>
+                <a class="content-header-btn pull-right" href="https://wso2.org/jira/secure/Dashboard.jspa" target="blank" id="jiraResolvedURL">
+                    Detail
+                </a>
+            </div>
+            <div class="content-body">
+                <div class="col-md-12 " id="resolvedBug_jChart">
+                </div>
+            </div>
+        </div>
+    <!-- Leave 
+<div class="col-sm-6 col-md-6 col-lg-3 content-wrap leave divEq">
+  <div class="content-header">
+    <h5>Leave Summary</h5>
+  </div>
+  <div class="content-body">
+    <div class="row">
+      <div id="dChartPie" class="col-md-12 img-center claerfix">
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-inline">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="xm-inline">Year:</label>
+            <select id="leave_year" class="form-control xm-inline">
+             z
+            </select>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="xm-inline">Last Leave:</label>
+            <p class="form-control-static xm-inline"><label id="lastLeave"> </label>
+            <label id="noLastleaves"> </label></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+    </div>
+    <!-- Charts -->
+    <div class="row">
+        <div class="content-wrap">
+            <div class="content-header">
+                <h5>
+                    Rotational Allocation Snapshot
+                </h5>
+                <!-- <a class="content-header-btn pull-right" href="">View All</a> -->
+            </div>
+            <div class="content-body form-horizontal">
+                <div class="row">
+                    <div class="col-md-2 col-xl-2 marginTop15" style="width: 15%">
+                        <div class="form-group">
+                            <label class="col-sm-10 control-label">
+                                Last/Current Rotation Period:
+                            </label>
+                            <div class="col-sm-10">
+                                <p class="form-control-static" id="lastRotationPeriodPara">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-10 col-xl-20 snapshotWrap" id="lastRotational_snapshotWrap" style="width: 85%">
+                    </div>
+                    <div class="col-md-10 col-xl-20 snapshotWrap" id="lastAllocation_snapshotWrap" style="width: 85%">
+                    </div>
+                </div>
+                <div class="row marginTop10">
+                    <div class="col-md-2 col-xl-2 marginTop15" style="width: 15%">
+                        <div class="form-group">
+                            <label class="col-sm-8 control-label">
+                                Next Rotation Period:
+                            </label>
+                            <div class="col-sm-10">
+                                <p class="form-control-static" id="nextRotationPeriodPara">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-10 col-xl-20 snapshotWrap" id="nextRotational_snapshotWrap" style="width: 85%">
+                    </div>
+                    <div class="col-md-10 col-xl-20 snapshotWrap" id="nextAllocation_snapshotWrap" style="width: 85%">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%
+    var JS_LIBS = [
+        "libs/bootstrap3-editable/js/bootstrap-editable.js",
+        "libs/tinymce_4.2.3/tinymce.min.js",
+        "js/script.js",
+        "js/visa/country-code.js",
+        "js/date-manipulations.js",
+        "libs/d3_3.5.6/d3.min.js",
+        "libs/vizGrammar_1.0/vega.js",
+        "libs/vizGrammar_1.0/vizGrammar.min.js",
+        "js/search.js",
+        "js/jira_bug_summary/jira_bug_summary.js",
+        "js/clientEngagement/clientEngagement.js",
+        "js/visa/visa.js",
+        "js/general_details/general_details.js",
+        "js/allocation_snapshot/rotational_allocation_snapshot.js",
+        "js/location/location.js",
+        "js/location/getLongitudesAndLatitudes.js",
+        "js/code_review/dashbord_code_review_stat.js",
+        "js/cookies.js",  
+        "https://maps.googleapis.com/maps/api/js?key=AIzaSyAv_vLCo9pBsu8oIsNXE8BfeLHXSrzateE"      
+    ];
+    include('footer.jag');
+%>
+<script type="text/javascript">
+   $( ".engineers" ).change(function() {
+        return SearchForEng();
+});
+</script>

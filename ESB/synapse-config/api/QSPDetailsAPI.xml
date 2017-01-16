@@ -1,0 +1,8 @@
+<api xmlns="http://ws.apache.org/ns/synapse" name="QSPDetailsAPI" context="/QSPDetailsAPI" port="8245">
+   <resource methods="POST GET" uri-template="/getLatestQSPDetails/{year}" protocol="https" inSequence="getLatestQSPDetails"/>
+   <resource methods="GET" uri-template="/getQSPDetailsList" protocol="https" inSequence="getQSPDetailsList"/>
+   <resource methods="POST GET" uri-template="/getQSPDetails/{role}/{period}/{client}/{qspteammembername}" protocol="https" inSequence="getQSPDetails"/>
+   <handlers>
+       <handler class="org.wso2.rest.BasicAuthHandler"/>
+    </handlers>
+</api>

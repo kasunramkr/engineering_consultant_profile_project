@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="getLatestQSPDetails" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/accessToken')"
+    name="accessToken" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/refreshToken')"
+    name="refreshToken" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/clientId')"
+    name="clientId" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/clientSecret')"
+    name="clientSecret" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/spreadsheetApiUrl')"
+    name="apiUrl" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property name="key" scope="default" type="STRING" value="13chSDCk7cwG7g2-dDuNOXx82Ik1npbMbz31GQZ7SfZU"/>
+  <property name="worksheetId" scope="default" type="STRING" value="1"/>
+  <!-- give qsp team memeber to get from uri.var. -->
+  <property name="queryParam" scope="default" type="STRING" value="qspteammembername=&quot;Ishan Jayawardena&quot;"/>
+  <log level="custom">
+    <property name="At " value="start of sequence before spreadsheet init"/>
+  </log>
+  <googlespreadsheet.init>
+    <accessToken>{$ctx:accessToken}</accessToken>
+    <apiUrl>{$ctx:apiUrl}</apiUrl>
+    <clientId>{$ctx:clientId}</clientId>
+    <clientSecret>{$ctx:clientSecret}</clientSecret>
+    <refreshToken>{$ctx:refreshToken}</refreshToken>
+  </googlespreadsheet.init>
+  <log level="custom">
+    <property name="Before " value="spreadsheet.queryForRows"/>
+  </log>
+  <googlespreadsheet.queryForRows>
+    <key>{$ctx:key}</key>
+    <worksheetId>{$ctx:worksheetId}</worksheetId>
+    <queryParam>{$ctx:queryParam}</queryParam>
+  </googlespreadsheet.queryForRows>
+  <log level="custom">
+    <property name="Payload " value="after querying spreadsheet"/>
+  </log>
+  <log level="full"/>
+  <property expression="//openSearch:totalResults" name="totalQSPs"
+    scope="default" type="STRING"
+    xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"
+    xmlns:ns="http://org.apache.synapse/xsd"
+    xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:p="http://www.w3.org/2005/Atom"/>
+  <property expression="$body" name="responseBody" scope="default"
+    type="OM" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <log level="custom">
+    <property expression="get-property('totalQSPs')" name="totalQSPs" xmlns:ns="http://org.apache.synapse/xsd"/>
+    <property expression="get-property('responseBody')"
+      name="responseBody" xmlns:ns="http://org.apache.synapse/xsd"/>
+  </log>
+  <filter xmlns:ns="http://org.apache.synapse/xsd" xpath="get-property('totalQSPs')!=0">
+    <then>
+      <!-- this member has done QSPs -->
+      <property expression="$ctx:responseBody//p:entry[last()]"
+        name="lastQSP" scope="default" type="OM"
+        xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"
+        xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0" xmlns:p="http://www.w3.org/2005/Atom"/>
+      <log level="custom">
+        <property expression="get-property('lastQSP')" name="lastQSP"/>
+      </log>
+      <property expression="$ctx:lastQSP/gsx:qspclient" name="qspClient"
+        scope="default" type="STRING" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"/>
+      <property expression="$ctx:lastQSP/gsx:dates" name="timePeriod"
+        scope="default" type="STRING" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"/>
+      <property expression="$ctx:lastQSP/gsx:roleplayed"
+        name="rolePlayed" scope="default" type="STRING" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"/>
+      <property expression="$ctx:lastQSP/gsx:recommendfornextqspasalead"
+        name="recommendForLead" scope="default" type="STRING" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"/>
+      <property
+        expression="$ctx:lastQSP/gsx:recommendfornextqspasconsultant"
+        name="recommendForConsultant" scope="default" type="STRING" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"/>
+      <property expression="$ctx:lastQSP/gsx:username"
+        name="recommendedBy" scope="default" type="STRING" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"/>
+      <!--recommendation by is entered by gmail address -->
+      <log level="custom">
+        <property expression="get-property('rolePlayed')" name="rolePlayed"/>
+        <property expression="get-property('qspClient')" name="qspClient"/>
+        <property expression="get-property('timePeriod')" name="timePeriod"/>
+        <property expression="get-property('recommendForLead')" name="recommendForLead"/>
+        <property expression="get-property('recommendForConsultant')" name="recommendForConsultant"/>
+        <property expression="get-property('recommendedBy')" name="recommendedBy"/>
+      </log>
+      <filter xmlns:p="http://www.w3.org/2005/Atom" xpath="get-property('rolePlayed') = 'Trainee' and get-property('totalQSPs')>1">
+        <then>
+          <property expression="$ctx:responseBody//p:entry[last()-1]"
+            name="lastQSP_feedback2" scope="default" type="OM"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0"/>
+          <log level="custom">
+            <property expression="get-property('lastQSP_feedback2')" name="lastQSP_feedback2"/>
+          </log>
+          <property expression="$ctx:lastQSP_feedback2/gsx:qspclient"
+            name="qspClient_feedback2" scope="default" type="STRING" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"/>
+          <property expression="$ctx:lastQSP_feedback2/gsx:dates"
+            name="timePeriod_feedback2" scope="default" type="STRING" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"/>
+          <property expression="$ctx:lastQSP_feedback2/gsx:roleplayed"
+            name="rolePlayed_feedback2" scope="default" type="STRING" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"/>
+          <filter
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xpath="get-property('qspClient_feedback2')=get-property('qspClient') and get-property('timePeriod_feedback2')=get-property('timePeriod') and get-property('rolePlayed')=get-property('rolePlayed_feedback2')">
+            <then>
+              <property
+                expression="$ctx:lastQSP_feedback2/gsx:recommendfornextqspasalead"
+                name="recommendForLead_feedback2" scope="default" type="STRING"/>
+              <property
+                expression="$ctx:lastQSP_feedback2/gsx:recommendfornextqspasconsultant"
+                name="recommendForConsultant_feedback2" scope="default" type="STRING"/>
+              <property expression="$ctx:lastQSP_feedback2/gsx:username"
+                name="recommendedBy_feedback2" scope="default" type="STRING"/>
+              <log level="custom">
+                <property
+                  expression="get-property('recommendForLead_feedback2')" name="recommendForLead_feedback2"/>
+                <property
+                  expression="get-property('recommendForConsultant_feedback2')" name="recommendForConsultant_feedback2"/>
+                <property
+                  expression="get-property('recommendedBy_feedback2')" name="recommendedBy_feedback2"/>
+              </log>
+            </then>
+            <else/>
+          </filter>
+        </then>
+        <else>
+          <log level="custom">
+            <property name="YOU ARE HERE" value=">>>>>>>>>>>>>>"/>
+          </log>
+        </else>
+      </filter>
+    </then>
+    <else/>
+  </filter>
+  <payloadFactory media-type="json">
+    <format>
+        {	"LatestQSP":{
+        		"feedback1":{
+                  		"rolePlayed" : "$1",
+                  		"qspClient" : "$2",
+                  		"timePeriod" : "$3",
+                  		"recommendForLead" : "$4",
+                  		"recommendForConsultant" : "$5",
+                   		"recommendedBy" : "$6"
+                   	},
+                   	"feedback2":{
+                   		"recommendForLead" : "$7",
+                  		"recommendForConsultant" : "$8",
+                   		"recommendedBy" : "$9"
+                   	}
+                }
+          
+            }
+	</format>
+    <args>
+      <arg evaluator="xml" expression="get-property('rolePlayed')" xmlns:ns="http://org.apache.synapse/xsd"/>
+      <arg evaluator="xml" expression="get-property('qspClient')" xmlns:ns="http://org.apache.synapse/xsd"/>
+      <arg evaluator="xml" expression="get-property('timePeriod')" xmlns:ns="http://org.apache.synapse/xsd"/>
+      <arg evaluator="xml" expression="get-property('recommendForLead')" xmlns:ns="http://org.apache.synapse/xsd"/>
+      <arg evaluator="xml"
+        expression="get-property('recommendForConsultant')" xmlns:ns="http://org.apache.synapse/xsd"/>
+      <arg evaluator="xml" expression="get-property('recommendedBy')" xmlns:ns="http://org.apache.synapse/xsd"/>
+      <arg evaluator="xml"
+        expression="get-property('recommendForLead_feedback2')" xmlns:ns="http://org.apache.synapse/xsd"/>
+      <arg evaluator="xml"
+        expression="get-property('recommendForConsultant_feedback2')" xmlns:ns="http://org.apache.synapse/xsd"/>
+      <arg evaluator="xml"
+        expression="get-property('recommendedBy_feedback2')" xmlns:ns="http://org.apache.synapse/xsd"/>
+    </args>
+  </payloadFactory>
+  <log level="full"/>
+  <respond/>
+</sequence>

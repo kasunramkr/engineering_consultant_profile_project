@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><artifacts>
+    <artifact name="EngProfileDashboard_CodeReviewProxy" groupId="com.example.engineering-profile-app-version-1.0.proxy-service" version="1.0.0" type="synapse/proxy-service" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/proxy-services/EngProfileDashboard_CodeReviewProxy.xml</file>
+    </artifact>
+    <artifact name="getJiraBugSummaryAPI" groupId="com.example.engineering-profile-app-version-1.0.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/getJiraBugSummaryAPI.xml</file>
+    </artifact>
+    <artifact name="CodeReviewStatisticsAPI" groupId="com.example.engineering-profile-app-version-1.0.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/CodeReviewStatisticsAPI.xml</file>
+    </artifact>
+    <artifact name="jiraSearchEndpoint" groupId="com.example.engineering-profile-app-version-1.0.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/jiraSearchEndpoint.xml</file>
+    </artifact>
+    <artifact name="getReviewCountByTeam" groupId="com.example.engineering-profile-app-version-1.0.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/getReviewCountByTeam.xml</file>
+    </artifact>
+    <artifact name="getCodeReviewMailById" groupId="com.example.engineering-profile-app-version-1.0.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/getCodeReviewMailById.xml</file>
+    </artifact>
+    <artifact name="getReviewCountByPersonNormal" groupId="com.example.engineering-profile-app-version-1.0.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/getReviewCountByPersonNormal.xml</file>
+    </artifact>
+    <artifact name="getCodeReviewById" groupId="com.example.engineering-profile-app-version-1.0.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/getCodeReviewById.xml</file>
+    </artifact>
+    <artifact name="getCodeReviewList" groupId="com.example.engineering-profile-app-version-1.0.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/getCodeReviewList.xml</file>
+    </artifact>
+    <artifact name="getReviewCountByPersonException" groupId="com.example.engineering-profile-app-version-1.0.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/getReviewCountByPersonException.xml</file>
+    </artifact>
+    <artifact name="codeReview" groupId="com.example.engineering-profile-app-version-1.0.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/codeReview.xml</file>
+    </artifact>
+    <artifact name="insertCodeReviewExceptionList" groupId="com.example.engineering-profile-app-version-1.0.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/insertCodeReviewExceptionList.xml</file>
+    </artifact>
+    <artifact name="gmailCodeReview" groupId="com.example.engineering-profile-app-version-1.0.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/gmailCodeReview.xml</file>
+    </artifact>
+    <artifact name="codeReviewgmailSync" groupId="com.example.engineering-profile-app-version-1.0.task" version="1.0.0" type="synapse/task" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/task/codeReviewgmailSync.xml</file>
+    </artifact>
+    <artifact name="getJiraAssignedReportBugSummary" groupId="com.example.engineering-profile-app-version-1.0.sequence" version="1.0.0" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/sequences/getJiraAssignedReportBugSummary.xml</file>
+    </artifact>
+    <artifact name="getLastResolvedJiraBugSummary" groupId="com.example.engineering-profile-app-version-1.0.sequence" version="1.0.0" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/sequences/getLastResolvedJiraBugSummary.xml</file>
+    </artifact>
+    <artifact name="getCodeReviewStatistics" groupId="com.example.engineering-profile-app-version-1.0.sequence" version="1.0.0" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/sequences/getCodeReviewStatistics.xml</file>
+    </artifact>
+    <artifact name="codeReviewByMailId" groupId="com.example.engineering-profile-app-version-1.0.sequence" version="1.0.0" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/sequences/codeReviewByMailId.xml</file>
+    </artifact>
+    <artifact name="codeReviewList" groupId="com.example.engineering-profile-app-version-1.0.sequence" version="1.0.0" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/sequences/codeReviewList.xml</file>
+    </artifact>
+    <artifact name="DSS_SEC" groupId="com.example.engineering-profile-app-version-1.0.local-entry" version="1.0.0" type="synapse/local-entry" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/local-entries/DSS_SEC.xml</file>
+    </artifact>
+</artifacts>

@@ -1,0 +1,52 @@
+<%
+/*
+~   Copyright (c) 2005-2016, WSO2 Inc. (http://wso2.org) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+*/
+include("../constants.jag");
+var log = new Log();
+var headers = ESB_HEADERS;
+var action = request.getParameter("action");
+if (action == "getCodeReviewDetails") {
+	// call ESB API to get review details for the specific code review mail Id
+	var url = codeReviewByMailIdURL + request.getParameter("mailId");
+	var respond = get(url, {},headers, "json");
+	print(respond);
+}
+else if (action == "getCodeReviewStats"){
+	// call ESB API to get code review statistics for the workEmail and year
+	var url = getCodeReviewStatisticsURL + request.getParameter("year") + "/" + request.getParameter("workEmail")+ "/" + request.getParameter("team");
+	var respond = get(url, {},headers, "json");
+	print(respond);	
+}
+else if (action == "getAllCodeReviews"){
+	// call ESB API to get a list of all code revies for the workEmail
+	var url = getCodeReviewListURL + request.getParameter("workEmail")+ "/" + request.getParameter("team");
+	var respond = get(url, {},headers, "json");
+	print(respond);
+}
+else {
+	log.error("No/Invalid action specified. " + action);
+    response.status = 400;
+	response.content = "Invalid Action parameter";	
+}
+%>
+
+
+
+
+
+
+
+

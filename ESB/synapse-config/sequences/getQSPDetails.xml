@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="getQSPDetails" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/accessToken')"
+    name="accessToken" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/refreshToken')"
+    name="refreshToken" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/clientId')"
+    name="clientId" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/clientSecret')"
+    name="clientSecret" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/spreadsheetApiUrl')"
+    name="apiUrl" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property name="key" scope="default" type="STRING" value="13chSDCk7cwG7g2-dDuNOXx82Ik1npbMbz31GQZ7SfZU"/>
+  <property name="worksheetId" scope="default" type="STRING" value="1"/>
+  <property expression="get-property('uri.var.period')" name="period"
+    scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property expression="get-property('uri.var.role')" name="role"
+    scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property expression="get-property('uri.var.client')" name="client"
+    scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property expression="get-property('uri.var.qspteammembername')"
+    name="qspMember" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property
+    expression="fn:concat('qspteammembername=&quot;',get-property('qspMember'),'&quot; and roleplayed=&quot;',get-property('role'),'&quot; and dates=&quot;',get-property('period'),'&quot; and qspclient=&quot;',get-property('client'),'&quot;')"
+    name="queryParam" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <log level="custom">
+    <property name="At " value="start of sequence before spreadsheet init"/>
+    <property expression="get-property('queryParam')" name="query" xmlns:ns="http://org.apache.synapse/xsd"/>
+  </log>
+  <googlespreadsheet.init>
+    <accessToken>{$ctx:accessToken}</accessToken>
+    <apiUrl>{$ctx:apiUrl}</apiUrl>
+    <clientId>{$ctx:clientId}</clientId>
+    <clientSecret>{$ctx:clientSecret}</clientSecret>
+    <refreshToken>{$ctx:refreshToken}</refreshToken>
+  </googlespreadsheet.init>
+  <log level="custom">
+    <property name="Before " value="spreadsheet.queryForRows"/>
+  </log>
+  <googlespreadsheet.queryForRows>
+    <key>{$ctx:key}</key>
+    <worksheetId>{$ctx:worksheetId}</worksheetId>
+    <queryParam>{$ctx:queryParam}</queryParam>
+  </googlespreadsheet.queryForRows>
+  <log level="custom">
+    <property name="Payload " value="after querying spreadsheet"/>
+  </log>
+  <log level="full"/>
+  <property expression="//openSearch:totalResults" name="totalQSPs"
+    scope="default" type="STRING"
+    xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"
+    xmlns:ns="http://org.apache.synapse/xsd"
+    xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:p="http://www.w3.org/2005/Atom"/>
+  <property expression="$body" name="responseBody" scope="default"
+    type="OM" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <log level="custom">
+    <property expression="get-property('totalQSPs')" name="totalQSPs" xmlns:ns="http://org.apache.synapse/xsd"/>
+    <property expression="get-property('responseBody')"
+      name="responseBody" xmlns:ns="http://org.apache.synapse/xsd"/>
+  </log>
+  <filter xmlns:ns="http://org.apache.synapse/xsd" xpath="get-property('totalQSPs')!=0">
+    <then>
+      <!-- this member has done QSPs -->
+      <property name="messageType" scope="axis2" type="STRING" value="application/json"/>
+      <payloadFactory media-type="json">
+        <format>         {
+                           "qsp_details": {
+                            "timePeriod":"$1",
+                            "client" : "$2",
+                            "role" :"$3",
+                            "lead" : "$4",
+                            "member" : "$5",
+                            "sampleQuestion" : "$6",
+                            "feedbacks":[{"feedback":{
+                                    "feedbackby" : "$7",
+                                    "recommendations" : ["$8","$9"],
+                                    "communication" : ["$10","$11","$12","$13"],
+                                    "teamWork" : ["$14","$15","$16","$17"],
+                                    "abilityToworkIndependently":["$18","$19","$20","$21","$22","$23"],
+                                    "techSkillsOnQSPNeeds" : ["$24","$25","$26"],
+                                    "capabilityToDesignSolutions" : ["$27","$28"],
+                                    "customerManagement" : ["$29","$30","$31","$32","$33"]
+                                    
+                                      } 
+                                  }]                         
+                           
+                           }
+                          }    
+                      </format>
+        <args>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:dates"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:qspclient"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:roleplayed"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:qspleadname"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:qspteammembername"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg value=""/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:username"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:recommendfornextqspasalead"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:recommendfornextqspasconsultant"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:communication-1.verbalcommunication"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:communication-2.writtencommunication"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:communication-3.presentationskills"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:communication-4.demoskills"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:teamwork-attitudetowardsworkinvolved"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:teamwork-focuson110ratherthandoingmypart"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:teamwork-focusoncompletingtheqsptasks"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:teamwork-seektolearnandwalktheextramile"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:abilitytoworkindependently-delivertechnicalmaterialwithoutsupervisionvsneedloadsofguidancealongtheway"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:abilitytoworkindependently-cantrusttodelivervstheleadhastoreviewstuffalwaysbeforepresentingtoclient"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:abilitytoworkindependently-attentiontodetail"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:abilitytoworkindependently-qualityofnotestakes"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:abilitytoworkindependently-askforhelpappropriately"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:abilitytoworkindependently-donthideanythingatleastwithintheteam"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:technicalskillsonqspneeds-theplatformknow-howbeyondtheareaofexpertise"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:technicalskillsonqspneeds-haddonehomeworkonwhatthecustomerneedsandprepared"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:technicalskillsonqspneeds-know-howoncrosscuttingconcernssuchassecurityhaclusteringandthelike"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:capabilitytodesignsolutions-contributedtosadesign"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:capabilitytodesignsolutions-providedinsighttocustomerproblemresolution"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:customermanagement-abilitytohandlecustomers"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:customermanagement-answercomplexqueriesontheirown"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:customermanagement-hasthetechnicaldepthtounderstandcustomer"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:customermanagement-beingcontextsensitiveratherthandumpingknowntechnicaljargon"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <arg evaluator="xml"
+            expression="$ctx:responseBody/p:feed/p:entry[1]/gsx:customermanagement-havinggoodlisteningskillstohearwhatthecustomerisreallysayingasking"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+        </args>
+      </payloadFactory>
+      <!--create a json object from current payload-->
+      <filter xpath="get-property('totalQSPs')=2">
+        <then>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:username"
+            name="evaluator" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:recommendfornextqspasalead"
+            name="recommendations-1" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:recommendfornextqspasconsultant"
+            name="recommendations-2" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:communication-1.verbalcommunication"
+            name="communication-1" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:communication-2.writtencommunication"
+            name="communication-2" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:communication-3.presentationskills"
+            name="communication-3" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:communication-4.demoskills"
+            name="communication-4" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:teamwork-attitudetowardsworkinvolved"
+            name="teamwork-1" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:teamwork-focuson110ratherthandoingmypart"
+            name="teamwork-2" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:teamwork-focusoncompletingtheqsptasks"
+            name="teamwork-3" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:teamwork-seektolearnandwalktheextramile"
+            name="teamwork-4" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:abilitytoworkindependently-delivertechnicalmaterialwithoutsupervisionvsneedloadsofguidancealongtheway"
+            name="abilityToWorkIndependently-1" scope="default"
+            type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:abilitytoworkindependently-cantrusttodelivervstheleadhastoreviewstuffalwaysbeforepresentingtoclient"
+            name="abilityToWorkIndependently-2" scope="default"
+            type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:abilitytoworkindependently-attentiontodetail"
+            name="abilityToWorkIndependently-3" scope="default"
+            type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:abilitytoworkindependently-qualityofnotestakes"
+            name="abilityToWorkIndependently-4" scope="default"
+            type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:abilitytoworkindependently-askforhelpappropriately"
+            name="abilityToWorkIndependently-5" scope="default"
+            type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:abilitytoworkindependently-donthideanythingatleastwithintheteam"
+            name="abilityToWorkIndependently-6" scope="default"
+            type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:technicalskillsonqspneeds-theplatformknow-howbeyondtheareaofexpertise"
+            name="technicalskills-1" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:technicalskillsonqspneeds-haddonehomeworkonwhatthecustomerneedsandprepared"
+            name="technicalskills-2" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:technicalskillsonqspneeds-know-howoncrosscuttingconcernssuchassecurityhaclusteringandthelike"
+            name="technicalskills-3" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:capabilitytodesignsolutions-contributedtosadesign"
+            name="capabilityToDesignSolutions-1" scope="default"
+            type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:capabilitytodesignsolutions-providedinsighttocustomerproblemresolution"
+            name="capabilityToDesignSolutions-2" scope="default"
+            type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:customermanagement-abilitytohandlecustomers"
+            name="customerManagement-1" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:customermanagement-answercomplexqueriesontheirown"
+            name="customerManagement-2" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:customermanagement-hasthetechnicaldepthtounderstandcustomer"
+            name="customerManagement-3" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:customermanagement-beingcontextsensitiveratherthandumpingknowntechnicaljargon"
+            name="customerManagement-4" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <property
+            expression="$ctx:responseBody/p:feed/p:entry[last()]/gsx:customermanagement-havinggoodlisteningskillstohearwhatthecustomerisreallysayingasking"
+            name="customerManagement-5" scope="default" type="STRING"
+            xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:p="http://www.w3.org/2005/Atom"/>
+          <!-- append the second feedback json to payload -->
+          <script language="js"><![CDATA[payload = mc.getPayloadJSON();
+                                      	
+                    
+                                  feedback = new Object();
+                                  feedback.feedbackby = mc.getProperty("evaluator");
+                                  recom1 = mc.getProperty("recommendations-1");
+                                  recom2 = mc.getProperty("recommendations-2");
+
+                                  feedback.recommendations = [recom1,recom2];
+
+                                  com1 = mc.getProperty("communication-1");
+                                  com2 = mc.getProperty("communication-2");
+                                  com3 = mc.getProperty("communication-3");
+                                  com4 = mc.getProperty("communication-4");
+
+                                  feedback.communication =[com1,com2,com3,com4];
+
+                                  teamwork1 = mc.getProperty("teamwork-1");
+                                  teamwork2 = mc.getProperty("teamwork-2");
+                                  teamwork3 = mc.getProperty("teamwork-3");
+                                  teamwork4 = mc.getProperty("teamwork-4");
+                                  feedback.teamWork =[teamwork1,teamwork2,teamwork3,teamwork4];
+
+                                  ability1 = mc.getProperty("abilityToWorkIndependently-1");
+                                  ability2 = mc.getProperty("abilityToWorkIndependently-2");
+                                  ability3 = mc.getProperty("abilityToWorkIndependently-3");
+                                  ability4 = mc.getProperty("abilityToWorkIndependently-4");
+                                  ability5 = mc.getProperty("abilityToWorkIndependently-5");
+                                  ability6 = mc.getProperty("abilityToWorkIndependently-6");
+                                  feedback.abilityToworkIndependently = [ability1,ability2,ability3,ability4,ability5,ability6];
+
+                                  tech1 = mc.getProperty("technicalskills-1");
+                                  tech2 = mc.getProperty("technicalskills-2");
+                                  tech3 = mc.getProperty("technicalskills-3");
+                                  feedback.techSkillsOnQSPNeeds = [tech1,tech2,tech3]
+
+                                  capability1 = mc.getProperty("capabilityToDesignSolutions-1");
+                                  capability2 = mc.getProperty("capabilityToDesignSolutions-2");
+                                  feedback.capabilityToDesignSolutions = [capability1,capability2];
+
+                                  customerManagement1 = mc.getProperty("customerManagement-1");
+                                  customerManagement2 = mc.getProperty("customerManagement-2");
+                                  customerManagement3 = mc.getProperty("customerManagement-3");
+                                  customerManagement4 = mc.getProperty("customerManagement-4");
+                                  customerManagement5 = mc.getProperty("customerManagement-5");
+                                  feedback.customerManagement = [customerManagement1,customerManagement2,customerManagement3,customerManagement4,customerManagement5];
+
+                                  arrayObject = new Object();
+                                  arrayObject.feedback = feedback;
+                                  payload.qsp_details.feedbacks.push(arrayObject);
+                                  mc.setPayloadJSON(payload);]]></script>
+        </then>
+        <else/>
+      </filter>
+    </then>
+    <else/>
+  </filter>
+  <log level="custom">
+    <property name="End of sequence" value="esb response for qsp details"/>
+  </log>
+  <log level="full"/>
+  <respond/>
+</sequence>

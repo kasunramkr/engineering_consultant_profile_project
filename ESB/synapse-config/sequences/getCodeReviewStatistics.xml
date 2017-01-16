@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="getCodeReviewStatistics" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <property expression="get-property('DSS_SEC')" name="usp"
+        scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+    <property expression="get-property('uri.var.year')" name="year"
+        scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+    <property expression="get-property('uri.var.sender')" name="sender"
+        scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+    <property expression="get-property('uri.var.team')" name="team"
+        scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+    <!-- getting the team review count-->
+    <payloadFactory media-type="xml">
+        <format>
+            <p:getReviewCountByTeam xmlns:p="http://ws.wso2.org/dataservice">
+                <xs:team xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:team>
+                <xs:year xmlns:xs="http://ws.wso2.org/dataservice">$2</xs:year>
+            </p:getReviewCountByTeam>
+        </format>
+        <args>
+            <arg evaluator="xml" expression="get-property('team')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml" expression="get-property('year')" xmlns:ns="http://org.apache.synapse/xsd"/>
+        </args>
+    </payloadFactory>
+    <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+    <property expression="fn:concat('Basic ', base64Encode($ctx:usp))"
+        name="Authorization" scope="transport" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+    <call blocking="true">
+        <endpoint key="getReviewCountByTeam"/>
+    </call>
+    <property
+        expression="//p:Entries/p:Entry/p:quater[text()='Q1']//following-sibling::*[1]/text()"
+        name="teamQ1" scope="default" type="STRING"
+        xmlns:ns="http://org.apache.synapse/xsd" xmlns:p="http://ws.wso2.org/dataservice"/>
+    <property
+        expression="//p:Entries/p:Entry/p:quater[text()='Q2']//following-sibling::*[1]/text()"
+        name="teamQ2" scope="default" type="STRING"
+        xmlns:ns="http://org.apache.synapse/xsd" xmlns:p="http://ws.wso2.org/dataservice"/>
+    <property
+        expression="//p:Entries/p:Entry/p:quater[text()='Q3']//following-sibling::*[1]/text()"
+        name="teamQ3" scope="default" type="STRING"
+        xmlns:ns="http://org.apache.synapse/xsd" xmlns:p="http://ws.wso2.org/dataservice"/>
+    <property
+        expression="//p:Entries/p:Entry/p:quater[text()='Q4']//following-sibling::*[1]/text()"
+        name="teamQ4" scope="default" type="STRING"
+        xmlns:ns="http://org.apache.synapse/xsd" xmlns:p="http://ws.wso2.org/dataservice"/>
+    <!-- getting the personal review count-->
+    <payloadFactory media-type="xml">
+        <format>
+            <p:getReviewCountBySenderNormal xmlns:p="http://ws.wso2.org/dataservice">
+                <xs:sender xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:sender>
+                <xs:year xmlns:xs="http://ws.wso2.org/dataservice">$2</xs:year>
+            </p:getReviewCountBySenderNormal>
+        </format>
+        <args>
+            <arg evaluator="xml" expression="get-property('sender')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml" expression="get-property('year')" xmlns:ns="http://org.apache.synapse/xsd"/>
+        </args>
+    </payloadFactory>
+    <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+    <property expression="fn:concat('Basic ', base64Encode($ctx:usp))"
+        name="Authorization" scope="transport" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+    <call blocking="true">
+        <endpoint key="getReviewCountByPersonNormal"/>
+    </call>
+    <property
+        expression="//p:Entries/p:Entry/p:quater[text()='Q1']//following-sibling::*[1]/text()"
+        name="personalNormalQ1" scope="default" type="STRING"
+        xmlns:ns="http://org.apache.synapse/xsd" xmlns:p="http://ws.wso2.org/dataservice"/>
+    <property
+        expression="//p:Entries/p:Entry/p:quater[text()='Q2']//following-sibling::*[1]/text()"
+        name="personalNormalQ2" scope="default" type="STRING"
+        xmlns:ns="http://org.apache.synapse/xsd" xmlns:p="http://ws.wso2.org/dataservice"/>
+    <property
+        expression="//p:Entries/p:Entry/p:quater[text()='Q3']//following-sibling::*[1]/text()"
+        name="personalNormalQ3" scope="default" type="STRING"
+        xmlns:ns="http://org.apache.synapse/xsd" xmlns:p="http://ws.wso2.org/dataservice"/>
+    <property
+        expression="//p:Entries/p:Entry/p:quater[text()='Q4']//following-sibling::*[1]/text()"
+        name="personalNormalQ4" scope="default" type="STRING"
+        xmlns:ns="http://org.apache.synapse/xsd" xmlns:p="http://ws.wso2.org/dataservice"/>
+    <!-- getting the personal review count from exception list-->
+    <payloadFactory media-type="xml">
+        <format>
+            <p:getReviewCountBySenderException xmlns:p="http://ws.wso2.org/dataservice">
+                <xs:sender xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:sender>
+                <xs:year xmlns:xs="http://ws.wso2.org/dataservice">$2</xs:year>
+            </p:getReviewCountBySenderException>
+        </format>
+        <args>
+            <arg evaluator="xml" expression="get-property('sender')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml" expression="get-property('year')" xmlns:ns="http://org.apache.synapse/xsd"/>
+        </args>
+    </payloadFactory>
+    <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+    <property expression="fn:concat('Basic ', base64Encode($ctx:usp))"
+        name="Authorization" scope="transport" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+    <call blocking="true">
+        <endpoint key="getReviewCountByPersonException"/>
+    </call>
+    <property
+        expression="//p:Entries/p:Entry/p:quater[text()='Q1']//following-sibling::*[1]/text()"
+        name="personalExceptionQ1" scope="default" type="STRING"
+        xmlns:ns="http://org.apache.synapse/xsd" xmlns:p="http://ws.wso2.org/dataservice"/>
+    <property
+        expression="//p:Entries/p:Entry/p:quater[text()='Q2']//following-sibling::*[1]/text()"
+        name="personalExceptionQ2" scope="default" type="STRING"
+        xmlns:ns="http://org.apache.synapse/xsd" xmlns:p="http://ws.wso2.org/dataservice"/>
+    <property
+        expression="//p:Entries/p:Entry/p:quater[text()='Q3']//following-sibling::*[1]/text()"
+        name="personalExceptionQ3" scope="default" type="STRING"
+        xmlns:ns="http://org.apache.synapse/xsd" xmlns:p="http://ws.wso2.org/dataservice"/>
+    <property
+        expression="//p:Entries/p:Entry/p:quater[text()='Q4']//following-sibling::*[1]/text()"
+        name="personalExceptionQ4" scope="default" type="STRING"
+        xmlns:ns="http://org.apache.synapse/xsd" xmlns:p="http://ws.wso2.org/dataservice"/>
+    <payloadFactory media-type="json">
+        <format>
+        {
+
+          "teamQ1": "$1",
+    "teamQ2": "$2",
+    "teamQ3": "$3",
+    "teamQ4": "$4",
+    "personalNormalQ1": "$5",
+    "personalNormalQ2": "$6",
+    "personalNormalQ3": "$7",
+    "personalNormalQ4": "$8",
+    "personalExceptionQ1": "$9",
+    "personalExceptionQ2": "$10",
+    "personalExceptionQ3": "$11",
+    "personalExceptionQ4": "$12"
+    
+  }
+</format>
+        <args>
+            <arg evaluator="xml" expression="get-property('teamQ1')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml" expression="get-property('teamQ2')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml" expression="get-property('teamQ3')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml" expression="get-property('teamQ4')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml"
+                expression="get-property('personalNormalQ1')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml"
+                expression="get-property('personalNormalQ2')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml"
+                expression="get-property('personalNormalQ3')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml"
+                expression="get-property('personalNormalQ4')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml"
+                expression="get-property('personalExceptionQ1')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml"
+                expression="get-property('personalExceptionQ2')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml"
+                expression="get-property('personalExceptionQ3')" xmlns:ns="http://org.apache.synapse/xsd"/>
+            <arg evaluator="xml"
+                expression="get-property('personalExceptionQ4')" xmlns:ns="http://org.apache.synapse/xsd"/>
+        </args>
+    </payloadFactory>
+    <respond/>
+</sequence>

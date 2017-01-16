@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy name="EngProfileDashboard_NotesDetailsProxy" startOnLoad="true"
+  trace="disable" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+  <target>
+    <inSequence>
+      <property name="profileId" scope="default" type="STRING" value="m_profile"/>
+      <property name="userId" scope="default" type="STRING" value="milinda_user"/>
+      <property name="note" scope="default" type="STRING" value="This is a note"/>
+      <property name="sharedLevel" scope="default" type="STRING" value="high"/>
+      <!-- Inserting note in to personal note table-->
+      <payloadFactory media-type="xml">
+        <format>
+          <p:insertPersonalNote xmlns:p="http://ws.wso2.org/dataservice">
+            <xs:profileId xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:profileId>
+            <xs:userId xmlns:xs="http://ws.wso2.org/dataservice">$2</xs:userId>
+            <xs:note xmlns:xs="http://ws.wso2.org/dataservice">$3</xs:note>
+          </p:insertPersonalNote>
+        </format>
+        <args>
+          <arg evaluator="xml" expression="get-property('profileId')"
+            xmlns:ns="http://org.apache.synapse/xsd" xmlns:ns2="http://org.apache.synapse/xsd"/>
+          <arg evaluator="xml" expression="get-property('userId')"
+            xmlns:ns="http://org.apache.synapse/xsd" xmlns:ns2="http://org.apache.synapse/xsd"/>
+          <arg evaluator="xml" expression="get-property('note')"
+            xmlns:ns="http://org.apache.synapse/xsd" xmlns:ns2="http://org.apache.synapse/xsd"/>
+        </args>
+      </payloadFactory>
+      <property name="Content-Type" scope="transport" type="STRING" value="application/xml"/>
+      <call>
+        <endpoint key="insertPersonalNote"/>
+      </call>
+      <!-- Inserting note in to shared note table-->
+      <payloadFactory media-type="xml">
+        <format>
+          <p:insertSharedNote xmlns:p="http://ws.wso2.org/dataservice">
+            <xs:profileId xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:profileId>
+            <xs:userId xmlns:xs="http://ws.wso2.org/dataservice">$2</xs:userId>
+            <xs:note xmlns:xs="http://ws.wso2.org/dataservice">$3</xs:note>
+            <xs:sharedLevel xmlns:xs="http://ws.wso2.org/dataservice">$4</xs:sharedLevel>
+          </p:insertSharedNote>
+        </format>
+        <args>
+          <arg evaluator="xml" expression="get-property('profileId')"
+            xmlns:ns="http://org.apache.synapse/xsd" xmlns:ns2="http://org.apache.synapse/xsd"/>
+          <arg evaluator="xml" expression="get-property('userId')"
+            xmlns:ns="http://org.apache.synapse/xsd" xmlns:ns2="http://org.apache.synapse/xsd"/>
+          <arg evaluator="xml" expression="get-property('note')"
+            xmlns:ns="http://org.apache.synapse/xsd" xmlns:ns2="http://org.apache.synapse/xsd"/>
+          <arg evaluator="xml" expression="get-property('sharedLevel')"
+            xmlns:ns="http://org.apache.synapse/xsd" xmlns:ns2="http://org.apache.synapse/xsd"/>
+        </args>
+      </payloadFactory>
+      <property name="Content-Type" scope="transport" type="STRING" value="application/xml"/>
+      <call>
+        <endpoint key="insertSharedNote"/>
+      </call>
+      <!-- getting note from personal table-->
+      <payloadFactory media-type="xml">
+        <format>
+          <p:getPersonalNotes xmlns:p="http://ws.wso2.org/dataservice">
+            <xs:profileId xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:profileId>
+            <xs:userId xmlns:xs="http://ws.wso2.org/dataservice">$2</xs:userId>
+          </p:getPersonalNotes>
+        </format>
+        <args>
+          <arg evaluator="xml" expression="get-property('profileId')"
+            xmlns:ns="http://org.apache.synapse/xsd" xmlns:ns2="http://org.apache.synapse/xsd"/>
+          <arg evaluator="xml" expression="get-property('userId')"
+            xmlns:ns="http://org.apache.synapse/xsd" xmlns:ns2="http://org.apache.synapse/xsd"/>
+        </args>
+      </payloadFactory>
+      <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+      <call blocking="true">
+        <endpoint key="getPersonalNotes"/>
+      </call>
+      <log level="full"/>
+      <!-- getting note from shared table-->
+      <payloadFactory media-type="xml">
+        <format>
+          <p:getSharedNotes xmlns:p="http://ws.wso2.org/dataservice">
+            <xs:profileId xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:profileId>
+            <xs:userId xmlns:xs="http://ws.wso2.org/dataservice">$2</xs:userId>
+          </p:getSharedNotes>
+        </format>
+        <args>
+          <arg evaluator="xml" expression="get-property('profileId')"
+            xmlns:ns="http://org.apache.synapse/xsd" xmlns:ns2="http://org.apache.synapse/xsd"/>
+          <arg evaluator="xml" expression="get-property('userId')"
+            xmlns:ns="http://org.apache.synapse/xsd" xmlns:ns2="http://org.apache.synapse/xsd"/>
+        </args>
+      </payloadFactory>
+      <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+      <call blocking="true">
+        <endpoint key="getSharedNotes"/>
+      </call>
+      <log level="full"/>
+    </inSequence>
+    <outSequence/>
+    <faultSequence/>
+  </target>
+</proxy>

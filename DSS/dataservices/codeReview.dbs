@@ -1,0 +1,75 @@
+<data name="gmailDetails" transports="http https local">
+   <config enableOData="false" id="gmail_details">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://localhost:3306/gmail_details</property>
+      <property name="username">root</property>
+      <property name="password">bcrugby</property>
+   </config>
+   <query id="insertCodeReviewDetails" useConfig="gmail_details">
+      <sql>insert into code_review (subject,notes,title,sender,mailId,date,participants,team,year,quater) values (?,?,?,?,?,?,?,?,?,?)</sql>
+      <param name="subject" sqlType="STRING"/>
+      <param name="notes" sqlType="STRING"/>
+      <param name="title" sqlType="STRING"/>
+      <param name="sender" sqlType="STRING"/>
+      <param name="mailId" sqlType="STRING"/>
+      <param name="date" sqlType="STRING"/>
+      <param name="participants" sqlType="STRING"/>
+      <param name="team" sqlType="STRING"/>
+      <param name="year" sqlType="STRING"/>
+      <param name="quater" sqlType="STRING"/>
+   </query>
+   <operation name="insertCodeReviewDetails">
+      <call-query href="insertCodeReviewDetails">
+         <with-param name="subject" query-param="subject"/>
+         <with-param name="notes" query-param="notes"/>
+         <with-param name="title" query-param="title"/>
+         <with-param name="sender" query-param="sender"/>
+         <with-param name="mailId" query-param="mailId"/>
+         <with-param name="date" query-param="date"/>
+         <with-param name="participants" query-param="participants"/>
+         <with-param name="team" query-param="team"/>
+         <with-param name="year" query-param="year"/>
+         <with-param name="quater" query-param="quater"/>
+      </call-query>
+   </operation>
+   <query id="getCodeReviewMailId" useConfig="gmail_details">
+      <sql>select * from code_review where mailId = ?</sql>
+      <result element="Entries" rowName="Entry">
+         <element column="title" name="title" xsdType="string"/>
+         <element column="mailId" name="mailId" xsdType="string"/>
+      </result>
+      <param name="mailId" sqlType="STRING"/>
+   </query>
+   <operation name="getCodeReviewMailId">
+      <call-query href="getCodeReviewMailId">
+         <with-param name="mailId" query-param="mailId"/>
+      </call-query>
+   </operation>
+   <query id="insertCodeReviewExceptionList" useConfig="gmail_details">
+      <sql>insert into code_review_exception_list (subject,notes,title,sender,mailId,date,participants,team,year,quater) values (?,?,?,?,?,?,?,?,?,?)</sql>
+      <param name="subject" sqlType="STRING"/>
+      <param name="notes" sqlType="STRING"/>
+      <param name="title" sqlType="STRING"/>
+      <param name="sender" sqlType="STRING"/>
+      <param name="mailId" sqlType="STRING"/>
+      <param name="date" sqlType="STRING"/>
+      <param name="participants" sqlType="STRING"/>
+      <param name="team" sqlType="STRING"/>
+      <param name="year" sqlType="STRING"/>
+      <param name="quater" sqlType="STRING"/>
+   </query>
+   <operation name="insertCodeReviewExceptionList">
+      <call-query href="insertCodeReviewExceptionList">
+         <with-param name="subject" query-param="subject"/>
+         <with-param name="notes" query-param="notes"/>
+         <with-param name="title" query-param="title"/>
+         <with-param name="sender" query-param="sender"/>
+         <with-param name="mailId" query-param="mailId"/>
+         <with-param name="date" query-param="date"/>
+         <with-param name="participants" query-param="participants"/>
+         <with-param name="team" query-param="team"/>
+         <with-param name="year" query-param="year"/>
+         <with-param name="quater" query-param="quater"/>
+      </call-query>
+   </operation>
+</data>

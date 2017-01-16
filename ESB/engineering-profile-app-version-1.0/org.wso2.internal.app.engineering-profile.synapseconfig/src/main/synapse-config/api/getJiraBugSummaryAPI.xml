@@ -1,0 +1,37 @@
+<api xmlns="http://ws.apache.org/ns/synapse" context="/getJiraBugSummary" name="getJiraBugSummaryAPI" port="8245">
+  <resource inSequence="getJiraAssignedReportBugSummary" methods="POST GET" protocol="https" uri-template="/{engineerEmail}?bugStatuses={bugStatuses}">
+    <outSequence>
+      <property name="ENCLOSING_ELEMENT" scope="default">
+        <wrapper xmlns=""/>
+      </property>
+      <aggregate id="ITR_AGG">
+        <completeCondition>
+          <messageCount max="-1" min="-1"/>
+        </completeCondition>
+        <onComplete xmlns:ns="http://org.apache.synapse/xsd" enclosingElementProperty="ENCLOSING_ELEMENT" expression="//bugSummary">
+          <!-- send the payload as json back -->
+          <property name="messageType" scope="axis2" type="STRING" value="application/json"/>
+          <send/>
+        </onComplete>
+      </aggregate>
+    </outSequence>
+    <faultSequence/>
+  </resource>
+  <resource inSequence="getLastResolvedJiraBugSummary" methods="POST GET" protocol="https" uri-template="/getLastResolvedJiraBugSummary/{engineerEmail}?months={months}">
+    <outSequence>
+      <property name="ENCLOSING_ELEMENT" scope="default">
+        <wrapper xmlns=""/>
+      </property>
+      <aggregate id="ITR_AGG">
+        <completeCondition>
+          <messageCount max="-1" min="-1"/>
+        </completeCondition>
+        <onComplete xmlns:ns="http://org.apache.synapse/xsd" enclosingElementProperty="ENCLOSING_ELEMENT" expression="//monthlyBugSummary">
+          <property name="messageType" scope="axis2" type="STRING" value="application/json"/>
+          <send/>
+        </onComplete>
+      </aggregate>
+    </outSequence>
+    <faultSequence/>
+  </resource>
+</api>

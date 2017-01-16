@@ -1,0 +1,38 @@
+<data name="Dasboard_RotationalAllocation_DataService" transports="https">
+   <config enableOData="false" id="allocation_ds">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://192.168.56.212:3306/allocation_db_new?autoReconnect=true</property>
+      <property name="username">root</property>
+      <property name="password">password</property>
+   </config>
+   <query id="getRotationsByPeriod" useConfig="allocation_ds">
+      <sql>SELECT rot_al.email AS email, DATE_FORMAT(rot_al.start_date,'%Y-%m-%d') AS start_date,  DATE_FORMAT(rot_al.end_date,'%Y-%m-%d') AS end_date, rot.color AS rotation_color, rot.name AS rotation_name FROM (engineering_rotational_allocation AS rot_al INNER JOIN engineering_rotation AS rot ON rot_al.type = rot.id) WHERE rot_al.email=:email AND rot_al.end_date&gt;=(DATE(:periodStartDate)) AND rot_al.start_date&lt;=DATE(:periodEndDate) ORDER BY start_date;</sql>
+      <result outputType="json">{"Entries":{"Rotation":[{"email":"$email","start_date":"$start_date","end_date":"$end_date","rotation_color":"$rotation_color","rotation_name":"$rotation_name"}&#xd;]}}</result>
+      <param name="email" sqlType="STRING"/>
+      <param name="periodStartDate" sqlType="STRING"/>
+      <param name="periodEndDate" sqlType="STRING"/>
+   </query>
+   <resource method="GET" path="/engineering/rotations">
+      <call-query href="getRotationsByPeriod">
+         <with-param name="email" query-param="email"/>
+         <with-param name="periodStartDate" query-param="periodStartDate"/>
+         <with-param name="periodEndDate" query-param="periodEndDate"/>
+      </call-query>
+   </resource>
+   <query id="getAllocationsByPeriod" useConfig="allocation_ds">
+      <sql>SELECT al.email AS email, DATE_FORMAT(al.start_date,'%Y-%m-%d') AS start_date,  DATE_FORMAT(al.end_date,'%Y-%m-%d') AS end_date,al_type.color AS allocation_color, al_type.allocation_type AS allocation_type FROM (allocation AS al INNER JOIN allocation_type AS al_type ON al.allocation_type = al_type.id) WHERE al.email=:email AND al.end_date&gt;=(DATE(:periodStartDate)) AND al.start_date&lt;=DATE(:periodEndDate) ORDER BY start_date;</sql>
+      <result outputType="json">{"Entries":{"Allocation":[{"email":"$email","start_date":"$start_date","end_date":"$end_date","allocation_color":"$allocation_color","allocation_type":"$allocation_type"}&#xd;]}}</result>
+      <param name="email" sqlType="STRING"/>
+      <param name="periodStartDate" sqlType="STRING"/>
+      <param name="periodEndDate" sqlType="STRING"/>
+   </query>
+   <resource method="GET" path="/engineering/allocations">
+      <call-query href="getAllocationsByPeriod">
+         <with-param name="email" query-param="email"/>
+         <with-param name="periodStartDate" query-param="periodStartDate"/>
+         <with-param name="periodEndDate" query-param="periodEndDate"/>
+      </call-query>
+   </resource>
+   <!-- <enableSec/>
+   <policy key="conf:security/engineeringprofilepolicy.xml"/> -->
+</data>

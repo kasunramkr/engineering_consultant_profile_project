@@ -1,0 +1,69 @@
+<data disableStreaming="true" name="getVacationSummary" transports="http https local">
+   <config enableOData="false" id="gmail_details">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://localhost:3306/gmail_details</property>
+      <property name="username">root</property>
+      <property name="password">bcrugby</property>
+   </config>
+   <query id="getSickLeaveSumBySender" useConfig="gmail_details">
+      <sql>SELECT COUNT(no_of_leaves) AS no_of_sick_leaves FROM vacation where sender=? AND type="Sick Leave" AND leave_year=?</sql>
+      <result element="Entries" rowName="Entry">
+         <element column="no_of_sick_leaves" name="no_of_sick_leaves" xsdType="string"/>
+      </result>
+      <param name="sender" sqlType="STRING"/>
+      <param name="leave_year" sqlType="STRING"/>
+   </query>
+   <query id="getOtherLeaveSumBySender" useConfig="gmail_details">
+      <sql>SELECT COUNT(no_of_leaves) AS no_of_other_leaves FROM vacation where sender=? AND type!="Sick Leave" AND type!="Half Day"  AND leave_year=?</sql>
+      <result element="Entries" rowName="Entry">
+         <element column="no_of_other_leaves" name="no_of_other_leaves" xsdType="string"/>
+      </result>
+      <param name="sender" sqlType="STRING"/>
+      <param name="leave_year" sqlType="STRING"/>
+   </query>
+   <query id="getLeaveSumBySender" useConfig="gmail_details">
+      <sql>SELECT SUM(no_of_leaves) AS no_of_leaves, type FROM vacation WHERE sender=? AND leave_year=? AND type!="Half Day" GROUP BY type </sql>
+      <result element="Entries" rowName="Entry">
+         <element column="no_of_leaves" name="no_of_leaves" xsdType="string"/>
+         <element column="type" name="type" xsdType="string"/>
+      </result>
+      <param name="sender" sqlType="STRING"/>
+      <param name="leave_year" sqlType="STRING"/>
+   </query>
+   <query id="getLastLeave" useConfig="gmail_details">
+      <sql>SELECT leave_startDate,leave_endDate, no_of_leaves FROM vacation WHERE sender=? AND no_of_leaves&gt;=? AND leave_year = ? ORDER BY leave_startDate DESC LIMIT 1</sql>
+      <result element="Entries" rowName="Entry">
+         <element column="leave_startDate" name="leave_startDate" xsdType="string"/>
+         <element column="leave_endDate" name="leave_endDate" xsdType="string"/>
+         <element column="no_of_leaves" name="no_of_leaves" xsdType="string"/>
+      </result>
+      <param name="sender" sqlType="STRING"/>
+      <param name="no_of_leaves" sqlType="STRING"/>
+      <param name="leave_year" sqlType="STRING"/>
+   </query>
+   <operation name="getSickLeaveSumBySender">
+      <call-query href="getSickLeaveSumBySender">
+         <with-param name="sender" query-param="sender"/>
+         <with-param name="leave_year" query-param="leave_year"/>
+      </call-query>
+   </operation>
+   <operation name="getOtherLeaveSumBySender">
+      <call-query href="getOtherLeaveSumBySender">
+         <with-param name="sender" query-param="sender"/>
+         <with-param name="leave_year" query-param="leave_year"/>
+      </call-query>
+   </operation>
+   <operation name="getLeaveSumBySender">
+      <call-query href="getLeaveSumBySender">
+         <with-param name="sender" query-param="sender"/>
+         <with-param name="leave_year" query-param="leave_year"/>
+      </call-query>
+   </operation>
+   <operation name="getLastLeave">
+      <call-query href="getLastLeave">
+         <with-param name="sender" query-param="sender"/>
+         <with-param name="no_of_leaves" query-param="no_of_leaves"/>
+         <with-param name="leave_year" query-param="leave_year"/>
+      </call-query>
+   </operation>
+</data>

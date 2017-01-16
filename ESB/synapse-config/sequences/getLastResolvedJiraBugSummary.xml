@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse"
+          name="getLastResolvedJiraBugSummary"
+          trace="disable"><!-- start date of each month to get resolved bugs are sent in the uri as a string array --><property xmlns:ns="http://org.apache.synapse/xsd"
+             name="monthStartDateArray"
+             expression="get-property('uri.var.months')"
+             scope="default"
+             type="STRING"/>
+   <!-- convert the start date string array into a json array and set it as the payload --><script language="js">var a = mc.getProperty('monthStartDateArray');
+      var monthStartDateArray = eval('('+a+')');
+      var months = {months:monthStartDateArray};
+      mc.setPayloadJSON(months);</script>
+   <!-- iterate for each month's start date --><iterate xmlns:ns="http://org.apache.synapse/xsd"
+            continueParent="true"
+            id="ITR_AGG"
+            expression="//months"
+            sequential="true">
+      <target>
+         <sequence>
+            <property name="monthStartDate" expression="//months"/>
+            <!-- construct the end date for the month and set it and the month index (starting from 0 ) as properties --><script language="js">var dateParts = mc.getProperty("monthStartDate").split("-");
+                			//start date is passed as in the format of  YYYY-MM-DD
+             				var monthBeginDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+             				// construct the end date for the same month
+             				var monthEndDate = new Date(monthBeginDate.getFullYear(),monthBeginDate.getMonth()+1, 0);
+                  			var monthEndDate_month = '' + (monthEndDate.getMonth() + 1);
+             				var monthEndDate_day = '' + monthEndDate.getDate();
+             				var monthEndDate_year = monthEndDate.getFullYear();
+             				if (monthEndDate_month.length &lt; 2) 
+            					monthEndDate_month = '0' + monthEndDate_month;
+             				if (monthEndDate_day.length &lt; 2) 
+               					monthEndDate_day = '0' + monthEndDate_day;
+               				//construct the end date into YYYY-MM-DD format
+             				monthEndDate = [monthEndDate_year, monthEndDate_month, monthEndDate_day].join('-');
+             				mc.setProperty("monthEndDate",monthEndDate);
+             				mc.setProperty("monthIndex",monthBeginDate.getMonth()+'');</script>
+            <payloadFactory media-type="json">
+               <format>
+               		{
+               			"jql": "issuetype = Bug AND status = Resolved AND resolved &gt;= $1 AND resolved &lt;= $2 AND assignee in ('$3')",
+               			"startAt": 0,
+               			"maxResults": 0
+         		}        
+            </format>
+               <args>
+                  <arg evaluator="xml" expression="get-property('monthStartDate')"/>
+                  <arg evaluator="xml" expression="get-property('monthEndDate')"/>
+                  <arg evaluator="xml" expression="get-property('uri.var.engineerEmail')"/>
+               </args>
+            </payloadFactory>
+            <property name="DISABLE_CHUNKING" value="true" scope="axis2"/>
+            <property name="messageType" value="application/json" scope="axis2"/>
+            <call>
+               <endpoint key="jiraSearchEndpoint"/>
+            </call>
+            <!-- get the total bug count for each month and set it and the relevant month index in the xml payload --><script language="js">mc.setPayloadXML(
+                           &lt;monthlyBugSummary&gt;
+                         	&lt;monthIndex&gt;{mc.getProperty("monthIndex")} &lt;/monthIndex&gt;
+                            	&lt;bugCount&gt;{ mc.getPayloadJSON().total.toString()}&lt;/bugCount&gt;
+                        &lt;/monthlyBugSummary&gt;
+                    );</script>
+            <loopback/>
+         </sequence>
+      </target>
+   </iterate>
+</sequence>

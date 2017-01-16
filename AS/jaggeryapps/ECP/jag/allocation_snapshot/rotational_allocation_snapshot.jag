@@ -1,0 +1,49 @@
+<%
+/*
+ ~   Copyright (c) 2005-2016, WSO2 Inc. (http://wso2.org) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+*/
+include("../constants.jag");
+var log = new Log();
+var action = request.getParameter("action");
+if (action == "getAllocation") {
+	var url = allocationDetailsURL;
+	var workEmail = request.getParameter("workEmail");
+	var headers = DSS_HEADERS;
+		// send query parameters : periodStartDate, periodEndDate and email to get allocation from DSS service
+	var respond = get(url,{
+		email : request.getParameter("workEmail"),
+		periodStartDate : request.getParameter("periodStartDate"),
+		periodEndDate : request.getParameter("periodEndDate")
+		}, headers, "json");
+		print(respond);
+}
+else if (action == "getRotation") {
+	var url = rotationDetailsURL;
+	var workEmail = request.getParameter("workEmail");
+	var headers = DSS_HEADERS;
+		// send query parameters : periodStartDate, periodEndDate and email to get rotation from DSS service
+	var respond = get(url,{
+		email : request.getParameter("workEmail"),
+		periodStartDate : request.getParameter("periodStartDate"),
+		periodEndDate : request.getParameter("periodEndDate")
+		}, headers, "json");
+		print(respond);
+}
+else {
+	log.error("No/Invalid action specified. " + action);
+	response.status = 400;
+	response.content = "Invalid Action parameter";
+}
+%>

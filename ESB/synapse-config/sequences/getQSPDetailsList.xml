@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="getQSPDetailsList" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/accessToken')"
+    name="accessToken" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/refreshToken')"
+    name="refreshToken" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/clientId')"
+    name="clientId" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/clientSecret')"
+    name="clientSecret" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property
+    expression="get-property('registry','custom/EngProLocalEntries/qspSpreadsheet/spreadsheetApiUrl')"
+    name="apiUrl" scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+  <property name="key" scope="default" type="STRING" value="13chSDCk7cwG7g2-dDuNOXx82Ik1npbMbz31GQZ7SfZU"/>
+  <property name="worksheetId" scope="default" type="STRING" value="1"/>
+  <property name="queryParam" scope="default" type="STRING" value="qspteammembername=&quot;Ishan Jayawardena&quot;"/>
+  <log level="custom">
+    <property name="At " value="start of sequence before spreadsheet init"/>
+  </log>
+  <googlespreadsheet.init>
+    <accessToken>{$ctx:accessToken}</accessToken>
+    <apiUrl>{$ctx:apiUrl}</apiUrl>
+    <clientId>{$ctx:clientId}</clientId>
+    <clientSecret>{$ctx:clientSecret}</clientSecret>
+    <refreshToken>{$ctx:refreshToken}</refreshToken>
+  </googlespreadsheet.init>
+  <log level="custom">
+    <property name="Before " value="spreadsheet.queryForRows"/>
+  </log>
+  <googlespreadsheet.queryForRows>
+    <key>{$ctx:key}</key>
+    <worksheetId>{$ctx:worksheetId}</worksheetId>
+    <queryParam>{$ctx:queryParam}</queryParam>
+  </googlespreadsheet.queryForRows>
+  <log level="custom">
+    <property name="Payload " value="after querying spreadsheet"/>
+  </log>
+  <property expression="//openSearch:totalResults" name="totalQSPs"
+    scope="default" type="STRING"
+    xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"
+    xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:p="http://www.w3.org/2005/Atom"/>
+  <property expression="$body" name="responseBody" scope="default" type="OM"/>
+  <property name="messageType" scope="axis2" type="STRING" value="application/json"/>
+  <payloadFactory media-type="json">
+    <format>         {
+                           "qsp_list": [{"qsp":{"name":"ddd"}},{"qsp":{"name":"eeeee"}}]
+                          }    
+                      </format>
+    <args/>
+  </payloadFactory>
+  <class name="org.wso2.carbon.esb.forceful.json.ForcefulJsonConvertor"/>
+  <filter xpath="get-property('totalQSPs')!=0">
+    <then>
+      <!-- this member has done QSPs -->
+      <foreach expression="$ctx:responseBody/p:feed/p:entry"
+        id="foreach_1"
+        xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"
+        xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0" xmlns:p="http://www.w3.org/2005/Atom">
+        <sequence>
+          <property expression="//p:entry/gsx:qspclient"
+            name="qspClient" scope="default" type="STRING"/>
+          <property expression="//p:entry/gsx:dates" name="timePeriod"
+            scope="default" type="STRING"/>
+          <property expression="//p:entry/gsx:roleplayed"
+            name="rolePlayed" scope="default" type="STRING"/>
+          <property name="payloadSet" scope="default" type="STRING" value="false"/>
+          <script language="js"><![CDATA[payload = mc.getProperty("FORCE_BUILT_JSON");
+                      
+                  
+                     
+                               qsp = new Object();
+                               qsp.role = mc.getProperty('rolePlayed');
+                               qsp.period = mc.getProperty('timePeriod');
+                               qsp.client =  mc.getProperty('qspClient');
+                              var duplicate = false;
+                              if(qsp.role == "Trainee"){
+                                var qsp_list = payload.qsp_list;
+                                for(i =0; i < qsp_list.length; i++){
+                                    if (qsp_list[i].qsp.period == qsp.period){
+                                   
+                                    if (qsp_list[i].qsp.client == qsp.client){
+                                      duplicate = true;
+                                    
+                                      break;
+                                   }
+                                  }   
+                                }
+                              }
+                              if(!duplicate){
+                                  arrayObj = new Object();
+                                  arrayObj.qsp = qsp;
+                                  
+                                    payload.qsp_list.push(arrayObj);
+                                    mc.setPayloadJSON(payload);
+                                    mc.setProperty('payloadSet',"true");
+                                    
+    
+                     
+                              }
+                              else{
+                                  mc.setProperty('payloadSet',"false");
+                              
+                              }]]></script>
+          <filter xpath="get-property('payloadSet') = 'true' ">
+            <then>
+              <class name="org.wso2.carbon.esb.forceful.json.ForcefulJsonConvertor"/>
+            </then>
+            <else/>
+          </filter>
+        </sequence>
+      </foreach>
+    </then>
+    <else/>
+  </filter>
+  <log level="full"/>
+  <respond/>
+</sequence>

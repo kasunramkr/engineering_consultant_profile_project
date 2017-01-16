@@ -1,0 +1,28 @@
+<data name="Dashboard_PeopleHR_DataService" serviceNamespace="http://ws.wso2.org/dataservice" transports="https">
+   <config enableOData="false" id="default">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://192.168.56.212:3306/people_HR?autoReconnect=true</property>
+      <property name="username">root</property>
+      <property name="password">password</property>
+   </config>
+   <query id="select_dashboard_PEOPLE_HR_VIEW_query" useConfig="default">
+      <sql>SELECT EmployeeId, FirstName, LastName, WorkEmail, Date_Format(StartDate,'%d/%m/%Y') AS StartDate, JobRole, Department, Team, Company FROM PEOPLE_HR_DASHBOARD_VIEW WHERE WorkEmail=:WorkEmail</sql>
+      <result outputType="json">{"generalDetails":{"Employee":[{"EmployeeId":"$EmployeeId","FirstName":"$FirstName","LastName":"$LastName","WorkEmail":"$WorkEmail","StartDate":"$StartDate","JobRole":"$JobRole","Department":"$Department","Team":"$Team","Company":"$Company"}]}}</result>
+      <param name="WorkEmail" sqlType="STRING"/>
+   </query>
+   <query id="getEngineeringEmployees" useConfig="default">
+      <sql>SELECT FirstName, LastName, WorkEmail FROM PEOPLE_HR_DASHBOARD_VIEW WHERE Department IN ('ENGINEERING', 'ARCHITECTURE', 'DELIVERY', 'INFRASTRUCTURE', 'SOLUTIONS ARCHITECTURE', 'PARTNER') AND JobRole != "Intern" ORDER BY WorkEmail</sql>
+      <result outputType="json">{"employees" : { "employee" : [{"fname" : "$FirstName", "lname" : "$LastName","id":"$WorkEmail","text": "$WorkEmail" }]}}</result>
+   </query>
+   <resource method="GET" path="/employeeDetails/{WorkEmail}">
+      <call-query href="select_dashboard_PEOPLE_HR_VIEW_query">
+         <with-param name="WorkEmail" query-param="WorkEmail"/>
+      </call-query>
+   </resource>
+   <resource method="GET" path="/getAllEngineeringEmployees">
+      <call-query href="getEngineeringEmployees"/>
+   </resource>
+   <!-- <enableSec/>
+   <policy key="conf:security/engineeringprofilepolicy.xml"/> -->
+</data>
+

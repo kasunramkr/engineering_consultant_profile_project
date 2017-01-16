@@ -1,0 +1,18 @@
+<data name="getSupportFeedbacks" transports="http https local">
+   <config enableOData="false" id="supportFeedbacks">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://localhost:3306/pmtdb</property>
+      <property name="username">root</property>
+      <property name="password">bcrugby</property>
+   </config>
+   <query id="getSupportFeedbackList" useConfig="supportFeedbacks">
+      <sql>select id,year_week,lead_rating,job_performance from SUPPORT_PERFORMANCE where IS_SUBMITTED=2 AND developed_by=?</sql>
+      <result outputType="json">{"FeedBacks":{"FeedBack":[{"id":"$id","year_week":"$year_week","lead_rating":"$lead_rating","job_performance":"$job_performance"}]}}</result>
+      <param name="developed_by" sqlType="STRING"/>
+   </query>
+   <resource method="GET" path="/getSupportFeedbackList/{developed_by}">
+      <call-query href="getSupportFeedbackList">
+         <with-param name="developed_by" query-param="developed_by"/>
+      </call-query>
+   </resource>
+</data>

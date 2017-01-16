@@ -1,0 +1,56 @@
+<%
+/*
+~   Copyright (c) 2005-2016, WSO2 Inc. (http://wso2.org) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+*/
+include("../constants.jag");
+var log = new Log();
+var action = request.getParameter("action");
+var workEmail = request.getParameter("workEmail");
+if (action == "getPeopleHRDetails"){
+	var url  = employeeGeneralDetailsURL + workEmail;
+	var respond =  get(url, {}, DSS_HEADERS, "json");
+	print(respond);
+}
+else if (action == "getCommitershipRole") {
+	var carbon = require('carbon');
+	var tenantId = -1234;
+	var url = commitershipCheckbaseURL;
+	var server = new carbon.server.Server(url);
+	var userManager = new carbon.user.UserManager(server, tenantId);
+	var user = new carbon.user.User(userManager, workEmail);
+	var roles = ['wso2.committers'];	
+	//check whether the user has commitership by using Jaggery user Manager pointing to LDAP
+	if (user.hasRoles(roles)) {
+        print("Yes");
+    } else {
+        print("No");
+    }
+	
+}
+else if (action == "getProfilePic"){
+	// google plus profile picture extracted from picaseGooglePlus API
+	var url = picasaGooglePlusPhotoURL + workEmail + "?alt=json";
+	var googlePlusProfile = get(url, {}, "json");
+	var json = parse(stringify(googlePlusProfile));
+	// profileThumbURL is the url for the google plus profile picture comes with 64*64 default size
+	var profileThumbURL = json.data.entry.gphoto$thumbnail.$t;
+	print(profileThumbURL);
+}
+else{
+	log.error("No/Invalid action specified. " + action);
+    response.status = 400;
+	response.content = "Invalid Action parameter";
+}
+%>

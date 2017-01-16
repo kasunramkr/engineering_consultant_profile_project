@@ -1,0 +1,114 @@
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="getLeaveSummary">
+   <log level="custom">
+      <property name="Start of " value="getLeaveSummary Sequence"/>
+   </log>
+   <property xmlns:ns="http://org.apache.synapse/xsd" name="TIME_1" expression="get-property('SYSTEM_TIME')" scope="default" type="LONG"/>
+   <property name="sender" value="isharan@wso2.com" scope="default" type="STRING"/>
+   <property xmlns:ns="http://org.apache.synapse/xsd" name="no_of_leaves" expression="get-property('no_leaves_threshold')" scope="default" type="STRING"/>
+   <property xmlns:ns="http://org.apache.synapse/xsd" name="year" expression="get-property('uri.var.year')" scope="default" type="STRING"/>
+   <!-- get last leave more than the leave threshold for the given eng profile --><log level="custom">
+      <property name="sending payload" value="getLastLeave"/>
+   </log>
+   <payloadFactory media-type="xml">
+      <format>
+         <p:getLastLeave xmlns:p="http://ws.wso2.org/dataservice">
+            <xs:sender xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:sender>
+            <xs:no_of_leaves xmlns:xs="http://ws.wso2.org/dataservice">$2</xs:no_of_leaves>
+            <xs:leave_year xmlns:xs="http://ws.wso2.org/dataservice">$3</xs:leave_year>
+         </p:getLastLeave>
+      </format>
+      <args>
+         <arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml" expression="get-property('sender')"/>
+         <arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml" expression="get-property('no_of_leaves')"/>
+         <arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml" expression="get-property('year')"/>
+      </args>
+   </payloadFactory>
+   <log level="full"/>
+   <property name="messageType" value="application/xml" scope="axis2"/>
+   <call blocking="true">
+      <endpoint key="getLastLeaveBySender"/>
+   </call>
+   <log level="full"/>
+   <property xmlns:p="http://ws.wso2.org/dataservice" xmlns:ns="http://org.apache.synapse/xsd" name="leave_startDate" expression="//p:Entries/p:Entry/p:leave_startDate"/>
+   <property xmlns:p="http://ws.wso2.org/dataservice" xmlns:ns="http://org.apache.synapse/xsd" name="leave_endDate" expression="//p:Entries/p:Entry/p:leave_endDate"/>
+   <property xmlns:p="http://ws.wso2.org/dataservice" xmlns:ns="http://org.apache.synapse/xsd" name="no_of_leaves" expression="//p:Entries/p:Entry/p:no_of_leaves"/>
+   <!-- get no of leaves for each type (annual, casual , sick) for the given eng profile --><log level="custom">
+      <property name="sending payload" value="getLeaveSumBySender"/>
+   </log>
+   <payloadFactory media-type="xml">
+      <format>
+         <p:getLeaveSumBySender xmlns:p="http://ws.wso2.org/dataservice">
+            <xs:sender xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:sender>
+            <xs:leave_year xmlns:xs="http://ws.wso2.org/dataservice">$2</xs:leave_year>
+         </p:getLeaveSumBySender>
+      </format>
+      <args>
+         <arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml" expression="get-property('sender')"/>
+         <arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml" expression="get-property('year')"/>
+      </args>
+   </payloadFactory>
+   <property name="messageType" value="application/xml" scope="axis2"/>
+   <call blocking="true">
+      <endpoint key="getLeaveSumBySender"/>
+   </call>
+   <log level="full"/>
+   <property name="no_of_other_leaves" value="0"/>
+   <property name="no_of_sick_leaves" value="0"/>
+   <foreach xmlns:p="http://ws.wso2.org/dataservice" xmlns:ns="http://org.apache.synapse/xsd" id="foreach_1" expression="//p:Entries/p:Entry">
+      <sequence>
+         <property name="type" expression="//p:Entry/p:type"/>
+         <property name="leaves" expression="//p:Entry/p:no_of_leaves"/>
+         <filter xpath="get-property('type') = 'Annual' or get-property('type') = 'Casual' ">
+            <then>
+               <script language="js">print("inside filter");
+                    
+                    var leaveSum = mc.getProperty("no_of_other_leaves");
+           		var noFLeaves = mc.getProperty("leaves");
+           		print (leaveSum);
+           		print(noFLeaves);
+            		var result = parseInt(leaveSum) + parseInt(noFLeaves);
+            		print(result);
+            		mc.setProperty("no_of_other_leaves", result+"");</script>
+            </then>
+            <else>
+               <property name="no_of_sick_leaves" expression="//p:Entry/p:no_of_leaves"/>
+            </else>
+         </filter>
+      </sequence>
+   </foreach>
+   <log level="custom">
+      <property xmlns:ns="http://org.apache.synapse/xsd" name="no_of_other_leaves" expression="get-property('no_of_other_leaves')"/>
+      <property xmlns:ns="http://org.apache.synapse/xsd" name="no_of_sick_leaves" expression="get-property('no_of_sick_leaves')"/>
+   </log>
+   <property xmlns:ns="http://org.apache.synapse/xsd" name="TIME_2" expression="get-property('SYSTEM_TIME')" scope="default" type="LONG"/>
+   <script language="js">var time1 = mc.getProperty("TIME_1");
+              var time2 = mc.getProperty("TIME_2");
+              var timeTaken = time2 - time1;
+              print("--------------  " + timeTaken + " ms  -----------------");
+              mc.setProperty("RESPONSE_TIME", timeTaken);</script>
+   <log level="custom">
+      <property xmlns:ns="http://org.apache.synapse/xsd" name="Time Duration in ms: " expression="get-property('RESPONSE_TIME')"/>
+   </log>
+   <payloadFactory media-type="json">
+      <format>
+        {	"LeaveSummary":{
+                  "Sick" : "$1",
+                  "Other" : "$2",
+                  "LastLeaveStart" : "$3",
+                  "LastLeaveEnd" : "$4",
+                  "NofLastLeaves" : "$5"
+                }
+          
+            }
+	</format>
+      <args>
+         <arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml" expression="get-property('no_of_sick_leaves')"/>
+         <arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml" expression="get-property('no_of_other_leaves')"/>
+         <arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml" expression="get-property('leave_startDate')"/>
+         <arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml" expression="get-property('leave_endDate')"/>
+         <arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml" expression="get-property('no_of_leaves')"/>
+      </args>
+   </payloadFactory>
+   <log level="full"/>
+   <respond/>
+</sequence>

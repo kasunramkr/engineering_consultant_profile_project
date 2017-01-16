@@ -1,0 +1,322 @@
+<!--
+~   Copyright (c) 2005-2016, WSO2 Inc. (http://wso2.org) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
+<%
+var CSS_LIBS = [
+    "libs/data-tables_1.10.12/media/css/dataTables.bootstrap.min.css",
+    "libs/data-tables_1.10.12/extensions/Responsive/css/responsive.bootstrap.min.css"
+    ];
+include('header.jag');
+%>
+<!-- breadcrumb -->
+<div class="breadcrumb-wrapper clearfix">
+    <ol class="breadcrumb pull-left">
+        <li>
+            <a href="index.jag">
+                <i class="icon fw fw-home">
+                </i>
+                <span class="hidden-xs">
+                    Home
+                </span>
+            </a>
+        </li>
+        <li class="user hidden-xs">
+            <i class="icon fw fw-user">
+            </i>
+            <span id="breadCrumEmpName"/>
+        </li>
+        <li class="">
+            <a href="dashboard.jag">
+                Dashboard
+            </a>
+        </li>
+        <li class="active">
+            <span class="hidden-xs">
+                Client Engagements
+            </span>
+            <span class="visible-xs-inline-block">
+                Engagements
+            </span>
+        </li>
+    </ol>
+    <!--
+    <ul class="notes pull-right">
+        <li class="btn-notes">
+            <a aria-expanded="false" data-container=".breadcrumb-wrapper" data-target="#right-sidebar" data-toggle="sidebar">
+                <span class="icon fw-stack">
+                    <i class="fw fw-google-docs fw-stack-1x">
+                    </i>
+                </span>
+                <span>
+                    Notes
+                </span>
+            </a>
+        </li>
+    </ul>
+       -->
+</div>
+<div class="container-fluid dashboard">
+    <!--
+    <!- - .right-sidebar - ->
+    <div class="sidebar-wrapper sidebar-options" data-side="right" data-width="320" id="right-sidebar">
+        <button aria-expanded="true" class="btn btn-default close-handle close-sidebar" data-container=".breadcrumb-wrapper" data-container-divide="true" data-handle="close" data-target="#right-sidebar" data-toggle="sidebar" onclick="updateSidebarOptions()" rel="show-options">
+            <i class="fw fw-right-arrow">
+            </i>
+        </button>
+        <!- - Nav tabs - ->
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="active" role="presentation">
+                <a aria-controls="personal" data-toggle="tab" href="#personal" role="tab">
+                    Personal
+                </a>
+            </li>
+            <li role="presentation">
+                <a aria-controls="shared" data-toggle="tab" href="#shared" role="tab">
+                    Shared
+                </a>
+            </li>
+            <li role="presentation">
+                <a aria-controls="others" data-toggle="tab" href="#others" role="tab">
+                    By Others
+                </a>
+            </li>
+        </ul>
+        <!- - Tab panes - ->
+        <div class="tab-content">
+            <div class="tab-pane active" id="personal" role="tabpanel">
+                <div class="actionBar clearfix" id="actionBar">
+                    <a class="" href="" id="enableEdit">
+                        <span class="icon fw-stack">
+                            <i class="icon fw fw-edit fw-stack-1x">
+                            </i>
+                        </span>
+                        <span>
+                            Edit
+                        </span>
+                    </a>
+                    <a href="" id="cancelEdit" style="display:none">
+                        <span class="icon fw-stack">
+                            <i class="icon fw fw-cancel fw-stack-1x">
+                            </i>
+                        </span>
+                        <span>
+                            Cancel Edit
+                        </span>
+                    </a>
+                    <a href="" id="saveEdit" style="display:none">
+                        <span class="icon fw-stack">
+                            <i class="icon fw fw-save fw-stack-1x">
+                            </i>
+                        </span>
+                        <span>
+                            Save
+                        </span>
+                    </a>
+                </div>
+                <div class="content noteCon" id="fr1">
+                    <h2>
+                        Skill Gap Analysis
+                    </h2>
+                    <p>
+                        <strong>
+                            Technical
+                        </strong>
+                        <br>
+                            More experience in architecture and architecture platform level
+                        </br>
+                    </p>
+                    <p>
+                        <strong>
+                            Non Technical
+                        </strong>
+                        <br>
+                            Has to be more ascertive in communication
+                        </br>
+                    </p>
+                    <p>
+                        <strong>
+                            Customer Engagement
+                        </strong>
+                        <br>
+                            Need to go on a few QSPs as a Lead
+                        </br>
+                    </p>
+                    <br>
+                        <h2>
+                            Notes
+                        </h2>
+                        <p>
+                            Has great platform knowledge. Need to send him on a QSP as a lead test.
+                        </p>
+                        <p>
+                            Has been given Robbins Brothers account to cleanup and handle.
+                        </p>
+                    </br>
+                </div>
+            </div>
+            <div class="tab-pane" id="shared" role="tabpanel">
+                <div class="actionBar" id="actionBar2">
+                    <a class="" href="" id="enableEdit2">
+                        <span class="icon fw-stack">
+                            <i class="icon fw fw-edit fw-stack-1x">
+                            </i>
+                        </span>
+                        <span>
+                            Edit
+                        </span>
+                    </a>
+                    <a href="" id="cancelEdit2" style="display:none">
+                        <span class="icon fw-stack">
+                            <i class="icon fw fw-cancel fw-stack-1x">
+                            </i>
+                        </span>
+                        <span>
+                            Cancel Edit
+                        </span>
+                    </a>
+                    <a href="" id="saveEdit2" style="display:none">
+                        <span class="icon fw-stack">
+                            <i class="icon fw fw-save fw-stack-1x">
+                            </i>
+                        </span>
+                        <span>
+                            Save
+                        </span>
+                    </a>
+                </div>
+                <div class="content noteCon" id="fr2">
+                    <p>
+                        Has great platform knowledge. Need to send him on a QSP as a lead test.
+                    </p>
+                    <p>
+                        Has been given Robbins Brothers account to cleanup and handle.
+                    </p>
+                </div>
+            </div>
+            <div class="tab-pane" id="others" role="tabpanel">
+                <div aria-multiselectable="true" class="panel-group smart-accordion-default" id="accordion" role="tablist">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" id="headingOne" role="tab">
+                            <h4 class="panel-title">
+                                <a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" role="button">
+                                    <i class="fw fw-down pull-right">
+                                    </i>
+                                    <i class="fw fw-up pull-right">
+                                    </i>
+                                    Sam
+                                </a>
+                            </h4>
+                        </div>
+                        <div aria-labelledby="headingOne" class="panel-collapse collapse in" id="collapseOne" role="tabpanel">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" id="headingTwo" role="tab">
+                            <h4 class="panel-title">
+                                <a aria-controls="collapseTwo" aria-expanded="false" class="collapsed" data-parent="#accordion" data-toggle="collapse" href="#collapseTwo" role="button">
+                                    <i class="fw fw-down pull-right">
+                                    </i>
+                                    <i class="fw fw-up pull-right">
+                                    </i>
+                                    Jane
+                                </a>
+                            </h4>
+                        </div>
+                        <div aria-labelledby="headingTwo" class="panel-collapse collapse" id="collapseTwo" role="tabpanel">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" id="headingThree" role="tab">
+                            <h4 class="panel-title">
+                                <a aria-controls="collapseThree" aria-expanded="false" class="collapsed" data-parent="#accordion" data-toggle="collapse" href="#collapseThree" role="button">
+                                    <i class="fw fw-down pull-right">
+                                    </i>
+                                    <i class="fw fw-up pull-right">
+                                    </i>
+                                    David
+                                </a>
+                            </h4>
+                        </div>
+                        <div aria-labelledby="headingThree" class="panel-collapse collapse" id="collapseThree" role="tabpanel">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!- - /.right-sidebar - ->
+      -->
+    <h2>
+        Client Engagement List
+    </h2>
+    <div class="row">
+        <div class="col-sm-custom-6 content-wrap">
+            <div class="content-body">
+                <table class="table table-striped table-hover table-bordered display data-table" id="clinetEngagements">
+                    <thead>
+                        <tr>
+                            <th>
+                                Start Date
+                            </th>
+                            <th>
+                                End Date
+                            </th>
+                            <th>
+                                Type
+                            </th>
+                            <th>
+                                No of days
+                            </th>
+                            <th>
+                                Location
+                            </th>
+                            <th>
+                                Role
+                            </th>
+                            <th>
+                                Client
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<%
+    var JS_LIBS = [
+        "libs/tinymce_4.2.3/tinymce.min.js",
+        "libs/data-tables_1.10.12/media/js/jquery.dataTables.min.js",
+        "libs/data-tables_1.10.12/media/js/dataTables.bootstrap.min.js",
+        "libs/data-tables_1.10.12/extensions/Responsive/js/dataTables.responsive.js",
+        "libs/theme-wso2_1.0.0/extensions/datatables/js/dataTables.wso2.js",
+        "js/script.js",
+        "js/clientEngagement/clientEngagementList.js",
+        "js/cookies.js"
+    ];
+    include('footer.jag');
+%>

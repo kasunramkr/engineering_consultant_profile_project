@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!--
+~   Copyright (c) 2005-2016, WSO2 Inc. (http://wso2.org) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+            <meta content="IE=edge" http-equiv="X-UA-Compatible">
+                <meta content="width=device-width, initial-scale=1" name="viewport">
+                    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+                    <title>
+                        WSO2 Engineering Consultant Profile
+                    </title>
+                    <link href="libs/theme-wso2_1.0.0/images/favicon.png" rel="icon" sizes="16x16" type="image/png"/>
+                    <!-- WSO2 Theme -->
+                    <link href="css/theme.css" rel="stylesheet" type="text/css"/>
+                    <!-- Select2 CSS -->
+                    <link href="libs/select2_4.0.0/css/select2.min.css" rel="stylesheet" type="text/css"/>
+                    <!-- Font WSO2 CSS -->
+                    <link href="libs/font-wso2_1.1.1/css/font-wso2.min.css" rel="stylesheet" type="text/css"/>
+                    <link href="libs/font-awesome_4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>   
+                    <link href="css/custom.css" rel="stylesheet" type="text/css"/>
+                    <!--[if IE]>
+    <link href=css/theme-ie.min.css" rel="stylesheet" type="text/css" />
+    <![endif]-->
+                    <!-- CSS From pages -->
+                    <%
+                    if((CSS_LIBS) && CSS_LIBS.length > 0){
+                        for (var i = 0 ; i < CSS_LIBS.length ; i++){
+                        %>
+                    <link href="<%= CSS_LIBS[i]%>" rel="stylesheet" type="text/css" />
+                            <%
+                        }
+                    }
+                    %>
+                </meta>
+            </meta>
+        </meta>
+    </head>
+    <body class="sticky-footer">
+        <header class="header header-default">
+            <div class="container-fluid">
+                <div class="pull-left brand">
+                    <a href="index.jag">
+                        <img alt="wso2" class="logo" src="libs/theme-wso2_1.0.0/images/logo-inverse.svg" title="wso2">
+                            <h1 class="hidden-xs">
+                                Engineering Consultant Profile
+                            </h1>
+                            <h1 class="visible-xs-inline-block">
+                                ECP
+                            </h1>
+                        </img>
+                    </a>
+                </div>
+                <!--
+                <div class="pull-right auth">
+                    <img alt="wso2" class="" src="images/george_icon.png" title="profile icon">
+                        <a href="#">
+                            <i class="fa fa-sign-out">
+                            </i>
+                            <span class="hidden-xs">
+                                Sign out
+                            </span>
+                        </a>
+                    </img>
+                </div> -->
+            </div>
+        </header>

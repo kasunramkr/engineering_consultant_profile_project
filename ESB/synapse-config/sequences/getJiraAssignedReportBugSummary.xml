@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse"
+          name="getJiraAssignedReportBugSummary"><!-- bug statuses are passed in the uri as a string array --><property xmlns:ns="http://org.apache.synapse/xsd"
+             name="bugStatusesArray"
+             expression="get-property('uri.var.bugStatuses')"
+             scope="default"
+             type="STRING"/>
+   <!-- string array is converted to json array and set as the payload --><script language="js">var a = mc.getProperty('bugStatusesArray');
+      var bugStatusesArray = eval('('+a+')');
+      var bugStatuses = {bugStatuses:bugStatusesArray};
+      mc.setPayloadJSON(bugStatuses);</script>
+   <!-- iterate for each bug status in the JSON payload array --><iterate xmlns:ns="http://org.apache.synapse/xsd"
+            id="ITR_AGG"
+            expression="//bugStatuses"
+            sequential="true">
+      <target>
+         <sequence>
+            <property name="bugStatus" expression="//bugStatuses"/>
+            <!-- for assigned and reported bugs the payload to be sent is different --><filter xpath="get-property('bugStatus')='Assigned'">
+               <then>
+                  <payloadFactory media-type="json">
+                     <format>
+                                {
+                                  "jql": "issuetype = Bug AND assignee in ('$1')",
+                                  "startAt": 0,
+                                  "maxResults": 0
+                                }
+                            </format>
+                     <args>
+                        <arg evaluator="xml" expression="get-property('uri.var.engineerEmail')"/>
+                     </args>
+                  </payloadFactory>
+               </then>
+               <else>
+                  <filter xpath="get-property('bugStatus')='Reported'">
+                     <then>
+                        <payloadFactory media-type="json">
+                           <format>
+                                        {
+                                          "jql": "issuetype = Bug AND reporter in ('$1')",
+                                          "startAt": 0,
+                                          "maxResults": 0
+                                        }
+                                    </format>
+                           <args>
+                              <arg evaluator="xml" expression="get-property('uri.var.engineerEmail')"/>
+                           </args>
+                        </payloadFactory>
+                     </then>
+                     <else>
+                        <payloadFactory media-type="json">
+                           <format>
+                                        {
+                                          "jql": "issuetype = Bug AND status = '$1' AND assignee in ('$2')",
+                                          "startAt": 0,
+                                          "maxResults": 0
+                                        }
+                                    </format>
+                           <args>
+                              <arg evaluator="xml" expression="get-property('bugStatus')"/>
+                              <arg evaluator="xml" expression="get-property('uri.var.engineerEmail')"/>
+                           </args>
+                        </payloadFactory>
+                     </else>
+                  </filter>
+               </else>
+            </filter>
+            <property name="DISABLE_CHUNKING" value="true" scope="axis2"/>
+            <property name="messageType" value="application/json" scope="axis2"/>
+            <call>
+               <endpoint key="jiraSearchEndpoint"/>
+            </call>
+            <!-- get the bug count for each bug status and construct a xml payload --><!-- <bugSummary> <bugStatus> </bugStatus> <bugCount> </bugCount> </bugSummary> --><script language="js">mc.setPayloadXML(
+                    &lt;bugSummary&gt;
+                      &lt;bugStatus&gt;{mc.getProperty("bugStatus")} &lt;/bugStatus&gt;
+                      &lt;bugCount&gt;{ mc.getPayloadJSON().total.toString()}&lt;/bugCount&gt;
+                    &lt;/bugSummary&gt;
+                  );</script>
+            <loopback/>
+         </sequence>
+      </target>
+   </iterate>
+</sequence>

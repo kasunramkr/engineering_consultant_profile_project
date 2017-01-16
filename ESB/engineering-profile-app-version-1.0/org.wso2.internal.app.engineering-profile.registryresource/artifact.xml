@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><artifacts>
+    <artifact name="userId" groupId="com.example.org.wso2.internal.app.engineering-profile.registryresource.resource" version="1.0.0" type="registry/resource" serverRole="GovernanceRegistry">
+        <item>
+            <file>userId</file>
+            <path>/_system/governance/custom/codeReviewGmailConnector</path>
+            <mediaType/>
+        </item>
+    </artifact>
+    <artifact name="refreshToken" groupId="com.example.org.wso2.internal.app.engineering-profile.registryresource.resource" version="1.0.0" type="registry/resource" serverRole="GovernanceRegistry">
+        <item>
+            <file>refreshToken</file>
+            <path>/_system/governance/custom/codeReviewGmailConnector</path>
+            <mediaType/>
+        </item>
+    </artifact>
+    <artifact name="number" groupId="com.example.org.wso2.internal.app.engineering-profile.registryresource.resource" version="1.0.0" type="registry/resource" serverRole="GovernanceRegistry">
+        <item>
+            <file>number</file>
+            <path>/_system/governance/custom/codeReviewGmailConnector</path>
+            <mediaType/>
+        </item>
+    </artifact>
+    <artifact name="clientSecret" groupId="com.example.org.wso2.internal.app.engineering-profile.registryresource.resource" version="1.0.0" type="registry/resource" serverRole="GovernanceRegistry">
+        <item>
+            <file>clientSecret</file>
+            <path>/_system/governance/custom/codeReviewGmailConnector</path>
+            <mediaType/>
+        </item>
+    </artifact>
+    <artifact name="clientId" groupId="com.example.org.wso2.internal.app.engineering-profile.registryresource.resource" version="1.0.0" type="registry/resource" serverRole="GovernanceRegistry">
+        <item>
+            <file>clientId</file>
+            <path>/_system/governance/custom/codeReviewGmailConnector</path>
+            <mediaType/>
+        </item>
+    </artifact>
+    <artifact name="apiUrl" groupId="com.example.org.wso2.internal.app.engineering-profile.registryresource.resource" version="1.0.0" type="registry/resource" serverRole="GovernanceRegistry">
+        <item>
+            <file>apiUrl</file>
+            <path>/_system/governance/custom/codeReviewGmailConnector</path>
+            <mediaType/>
+        </item>
+    </artifact>
+    <artifact name="accessToken" groupId="com.example.org.wso2.internal.app.engineering-profile.registryresource.resource" version="1.0.0" type="registry/resource" serverRole="GovernanceRegistry">
+        <item>
+            <file>accessToken</file>
+            <path>/_system/governance/custom/codeReviewGmailConnector</path>
+            <mediaType/>
+        </item>
+    </artifact>
+</artifacts>

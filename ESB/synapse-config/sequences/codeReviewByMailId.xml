@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="codeReviewByMailId" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <property expression="get-property('DSS_SEC')" name="usp"
+        scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+    <property expression="get-property('uri.var.mailId')" name="mailId"
+        scope="default" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+    <!-- getting the code review data from database-->
+    <payloadFactory media-type="xml">
+        <format>
+            <p:getCodeReviewById xmlns:p="http://ws.wso2.org/dataservice">
+                <xs:mailId xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:mailId>
+            </p:getCodeReviewById>
+        </format>
+        <args>
+            <arg evaluator="xml" expression="get-property('mailId')"
+                xmlns:ns="http://org.apache.synapse/xsd" xmlns:ns2="http://org.apache.synapse/xsd"/>
+        </args>
+    </payloadFactory>
+    <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+    <property expression="fn:concat('Basic ', base64Encode($ctx:usp))"
+        name="Authorization" scope="transport" type="STRING" xmlns:ns="http://org.apache.synapse/xsd"/>
+    <call blocking="true">
+        <endpoint key="getCodeReviewById"/>
+    </call>
+    <property name="messageType" scope="axis2" type="STRING" value="application/json"/>
+    <respond/>
+</sequence>

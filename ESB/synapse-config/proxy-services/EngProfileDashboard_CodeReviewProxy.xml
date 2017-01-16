@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy name="EngProfileDashboard_CodeReviewProxy" startOnLoad="true"
+  trace="disable" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+  <target>
+    <inSequence>
+      <property
+        expression="get-property('registry', 'custom/codeReviewGmailConnector/number')"
+        name="number" scope="default" type="STRING"/>
+      <property
+        expression="get-property('registry', 'custom/codeReviewGmailConnector/accessToken')"
+        name="accessToken" scope="default" type="STRING"/>
+      <property
+        expression="get-property('registry', 'custom/codeReviewGmailConnector/refreshToken')"
+        name="refreshToken" scope="default" type="STRING"/>
+      <property
+        expression="get-property('registry', 'custom/codeReviewGmailConnector/clientSecret')"
+        name="clientSecret" scope="default" type="STRING"/>
+      <property
+        expression="get-property('registry', 'custom/codeReviewGmailConnector/clientId')"
+        name="clientId" scope="default" type="STRING"/>
+      <property
+        expression="get-property('registry', 'custom/codeReviewGmailConnector/apiUrl')"
+        name="apiUrl" scope="default" type="STRING"/>
+      <property
+        expression="get-property('registry', 'custom/codeReviewGmailConnector/userId')"
+        name="userId" scope="default" type="STRING"/>
+      <script language="js"><![CDATA[var a = mc.getProperty('number')+"";         
+var n = parseInt(a);         
+var current_date = new Date();
+current_date.setDate(current_date.getDate()); 
+var before_date = ((current_date.getDate() < 10) ?  '0'+current_date.getDate() : current_date.getDate())+"/"+(((current_date.getMonth() + 1) < 10 ) ? '0'+(current_date.getMonth()+1) : (current_date.getMonth()+1))+"/"+current_date.getFullYear();
+
+var before_dateArray = before_date.split('/');
+
+var t = new Date();
+t.setDate(t.getDate() - n); 
+var after_date = ((t.getDate() < 10) ?  '0'+t.getDate() : t.getDate())+"/"+(((t.getMonth() + 1) < 10 ) ? '0'+(t.getMonth()+1) : (t.getMonth()+1))+"/"+t.getFullYear();
+  
+var after_dateArray = after_date.split('/');
+mc.setProperty("currentMonth", before_dateArray[1] + "");
+mc.setProperty("currentYear", before_dateArray[2] + "");;
+mc.setProperty("currentDay", before_dateArray[0] + "");
+mc.setProperty("afterMonth", after_dateArray[1] + "");
+mc.setProperty("afterYear", after_dateArray[2] + "");
+mc.setProperty("afterDay", after_dateArray[0] + "");
+mc.setProperty("ENCODED_PARAMS", encodeURIComponent(mc.getProperty('userId')));]]></script>
+      <property expression="get-property('currentMonth')"
+        name="currentMonth" scope="default" type="STRING"/>
+      <property expression="get-property('currentYear')"
+        name="currentYear" scope="default" type="STRING"/>
+      <property expression="get-property('currentDay')"
+        name="currentDay" scope="default" type="STRING"/>
+      <property expression="get-property('afterMonth')"
+        name="afterMonth" scope="default" type="STRING"/>
+      <property expression="get-property('afterYear')" name="afterYear"
+        scope="default" type="STRING"/>
+      <property expression="get-property('afterDay')" name="afterDay"
+        scope="default" type="STRING"/>
+      <property
+        expression="concat('https://www.googleapis.com/gmail/v1/users/',get-property('ENCODED_PARAMS'),'/messages?q=%22re%3AInvitation%3A+%5BCode+Review%5D%22+OR+%22re%3AUpdated+Invitation+%5BCode+Review%5D%22)+AND+after%3A',get-property('afterYear'),'%2F',get-property('afterMonth'),'%2F',get-property('afterDay'),'+AND+before%3A+',get-property('currentYear'),'%2F',get-property('currentMonth'),'%2F',get-property('currentDay'),'+NOT+is%3Achat')"
+        name="googleAPIurl" scope="default" type="STRING"/>
+      <gmail.init>
+        <userId>{$ctx:userId}</userId>
+        <accessToken>{$ctx:accessToken}</accessToken>
+        <apiUrl>{$ctx:apiUrl}</apiUrl>
+        <clientId>{$ctx:clientId}</clientId>
+        <clientSecret>{$ctx:clientSecret}</clientSecret>
+        <refreshToken>{$ctx:refreshToken}</refreshToken>
+      </gmail.init>
+      <header expression="get-property('googleAPIurl')" name="To" scope="default"/>
+      <call blocking="true">
+        <endpoint key="gmailCodeReview"/>
+      </call>
+      <iterate continueParent="true" expression="//threadId"
+        id="getMails" sequential="true" xmlns:ns="http://org.apache.synapse/xsd">
+        <target>
+          <sequence>
+            <property expression="//threadId" name="threadId"
+              scope="default" type="STRING"/>
+            <payloadFactory media-type="xml">
+              <format>
+                <p:getCodeReviewMailId xmlns:p="http://ws.wso2.org/dataservice">
+                  <xs:mailId xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:mailId>
+                </p:getCodeReviewMailId>
+              </format>
+              <args>
+                <arg evaluator="xml" expression="get-property('threadId')"/>
+              </args>
+            </payloadFactory>
+            <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+            <call blocking="true">
+              <endpoint key="getCodeReviewMailById"/>
+            </call>
+            <property expression="//p:Entries/p:Entry/p:title"
+              name="title" scope="default" type="STRING" xmlns:p="http://ws.wso2.org/dataservice"/>
+            <property expression="//p:Entries/p:Entry/p:mailId"
+              name="threadIdFromDB" scope="default" type="STRING" xmlns:p="http://ws.wso2.org/dataservice"/>
+            <filter regex="false" source="boolean(get-property('threadIdFromDB'))">
+              <then>
+                <gmail.readThread>
+                  <id>{$ctx:threadId}</id>
+                </gmail.readThread>
+                <property
+                  expression="json-eval($.messages[1].payload.parts[0].body.data)"
+                  name="body" scope="default" type="STRING"/>
+                <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+                <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+                <property expression="//payload" name="headerPayload"
+                  scope="default" type="OM"/>
+                <property
+                  expression="$ctx:headerPayload//headers/name[text()='Subject']//following-sibling::*/text()"
+                  name="subject" scope="default" type="STRING"/>
+                <property
+                  expression="base64Decode(get-property('body'))"
+                  name="decodedBody" scope="default" type="STRING"/>
+                <script language="js"><![CDATA[var threadId = mc.getProperty('threadId');
+                        var s = mc.getProperty('subject') + "";
+
+
+var matches = [];
+
+var pattern = /\[(.*?)\]/g;
+var match;
+while ((match = pattern.exec(s)) != null)
+{
+ matches.push(match[0]);
+}
+var rep1= matches[0];
+var reply2= matches[1];
+if(reply2!=null){
+var rep2 = matches[1].match(/[^[\]]+(?=])/g);
+}
+var replaceResult1 = s.replace(rep1,""). replace(reply2,"").replace(/Re:|Invitation|Updated|:/g,"") ;
+var title = replaceResult1.match(/.+?(?=@)/g);
+var str = mc.getProperty('decodedBody') + "";
+var date = s.match(/((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Sept|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?))(\s).*?(\s)((?:(?:[1]{1}\d{1}\d{1}\d{1})|(?:[2]{1}\d{3})))/);
+var replaceRes = date[0].replace(/\,/g,'');
+var dateArray = replaceRes.split(' ');
+var date_from_array = dateArray[1];
+var month_from_array = dateArray[0];
+var year_from_array = dateArray[2];
+var date = date_from_array+" "+month_from_array+" "+year_from_array;
+var d = Date.parse(date.toString());
+var monthNum = ["01", "02", "03", "04", "05", "06","07", "08", "09", "10", "11", "12"];
+var newDate = new Date(d);
+var year = newDate.getFullYear();
+var month = monthNum[newDate.getMonth()];
+var day = newDate.getDate();
+var sentDate= day +"\/"+month+"\/"+year;
+var sender = s.match(/([\w-+]+(?:\.[\w-+]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7})/);
+var participants =str.match(/(Participants|Attendees).*$/gm);
+var notes =str.match(/(notes|Notes|Comments|comments)((.|\n|\r)*)(!?(Thanks|Thankyou|Thank you|Regards|On))/gm);
+if(notes==null){
+	notes=null;
+}
+else{
+	mc.setProperty("notes", notes[0] + "");
+}
+if(sender==null){
+	sender=null;
+}
+else{
+	mc.setProperty("sender", sender[0] + "");
+}
+if(title==null){
+	title=null;
+}
+else{
+	mc.setProperty("title", title[0] + "");
+}
+mc.setProperty("participants", participants + "");
+mc.setProperty("date", sentDate + "");
+mc.setProperty("team", rep2 + "");
+mc.setProperty("year", year + "");
+var quater="";
+if(month=="01" || month=="02" ||month=="03"){
+	quater="Q1";
+}
+else if(month=="04" || month=="05" ||month=="06"){
+	quater="Q2";
+}
+else if(month=="07" || month=="08" ||month=="09"){
+	quater="Q3";
+}
+else {
+	quater="Q4";
+}
+mc.setProperty("quater", quater + "");]]></script>
+                <property expression="get-property('year')" name="year"
+                  scope="default" type="STRING"/>
+                <property expression="get-property('quater')"
+                  name="quater" scope="default" type="STRING"/>
+                <property expression="get-property('sender')"
+                  name="sender" scope="default" type="STRING"/>
+                <property expression="get-property('participants')"
+                  name="participants" scope="default" type="STRING"/>
+                <property expression="get-property('notes')"
+                  name="notes" scope="default" type="STRING"/>
+                <property expression="get-property('datePattern')"
+                  name="datePattern" scope="default" type="STRING"/>
+                <filter xpath="get-property('team')='undefined'">
+                  <then>
+                    <payloadFactory media-type="xml">
+                      <format>
+                        <p:insertCodeReviewDetails xmlns:p="http://ws.wso2.org/dataservice">
+                          <xs:subject xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:subject>
+                          <xs:notes xmlns:xs="http://ws.wso2.org/dataservice">$2</xs:notes>
+                          <xs:title xmlns:xs="http://ws.wso2.org/dataservice">$3</xs:title>
+                          <xs:sender xmlns:xs="http://ws.wso2.org/dataservice">$4</xs:sender>
+                          <xs:mailId xmlns:xs="http://ws.wso2.org/dataservice">$5</xs:mailId>
+                          <xs:date xmlns:xs="http://ws.wso2.org/dataservice">$6</xs:date>
+                          <xs:participants xmlns:xs="http://ws.wso2.org/dataservice">$7</xs:participants>
+                          <xs:team xmlns:xs="http://ws.wso2.org/dataservice">$8</xs:team>
+                          <xs:year xmlns:xs="http://ws.wso2.org/dataservice">$9</xs:year>
+                          <xs:quater xmlns:xs="http://ws.wso2.org/dataservice">$10</xs:quater>
+                        </p:insertCodeReviewDetails>
+                      </format>
+                      <args>
+                        <arg evaluator="xml" expression="get-property('subject')"/>
+                        <arg evaluator="xml" expression="get-property('notes')"/>
+                        <arg evaluator="xml" expression="get-property('title')"/>
+                        <arg evaluator="xml" expression="get-property('sender')"/>
+                        <arg evaluator="xml" expression="get-property('threadId')"/>
+                        <arg evaluator="xml" expression="get-property('date')"/>
+                        <arg evaluator="xml" expression="get-property('participants')"/>
+                        <arg evaluator="xml" expression="get-property('team')"/>
+                        <arg evaluator="xml" expression="get-property('year')"/>
+                        <arg evaluator="xml" expression="get-property('quater')"/>
+                      </args>
+                    </payloadFactory>
+                    <property name="Content-Type" scope="transport"
+                      type="STRING" value="application/xml"/>
+                    <call>
+                      <endpoint key="insertCodeReviewExceptionList"/>
+                    </call>
+                  </then>
+                  <else>
+                    <payloadFactory media-type="xml">
+                      <format>
+                        <p:insertCodeReviewDetails xmlns:p="http://ws.wso2.org/dataservice">
+                          <xs:subject xmlns:xs="http://ws.wso2.org/dataservice">$1</xs:subject>
+                          <xs:notes xmlns:xs="http://ws.wso2.org/dataservice">$2</xs:notes>
+                          <xs:title xmlns:xs="http://ws.wso2.org/dataservice">$3</xs:title>
+                          <xs:sender xmlns:xs="http://ws.wso2.org/dataservice">$4</xs:sender>
+                          <xs:mailId xmlns:xs="http://ws.wso2.org/dataservice">$5</xs:mailId>
+                          <xs:date xmlns:xs="http://ws.wso2.org/dataservice">$6</xs:date>
+                          <xs:participants xmlns:xs="http://ws.wso2.org/dataservice">$7</xs:participants>
+                          <xs:team xmlns:xs="http://ws.wso2.org/dataservice">$8</xs:team>
+                          <xs:year xmlns:xs="http://ws.wso2.org/dataservice">$9</xs:year>
+                          <xs:quater xmlns:xs="http://ws.wso2.org/dataservice">$10</xs:quater>
+                        </p:insertCodeReviewDetails>
+                      </format>
+                      <args>
+                        <arg evaluator="xml" expression="get-property('subject')"/>
+                        <arg evaluator="xml" expression="get-property('notes')"/>
+                        <arg evaluator="xml" expression="get-property('title')"/>
+                        <arg evaluator="xml" expression="get-property('sender')"/>
+                        <arg evaluator="xml" expression="get-property('threadId')"/>
+                        <arg evaluator="xml" expression="get-property('date')"/>
+                        <arg evaluator="xml" expression="get-property('participants')"/>
+                        <arg evaluator="xml" expression="get-property('team')"/>
+                        <arg evaluator="xml" expression="get-property('year')"/>
+                        <arg evaluator="xml" expression="get-property('quater')"/>
+                      </args>
+                    </payloadFactory>
+                    <property name="Content-Type" scope="transport"
+                      type="STRING" value="application/xml"/>
+                    <call>
+                      <endpoint key="codeReview"/>
+                    </call>
+                  </else>
+                </filter>
+              </then>
+              <else/>
+            </filter>
+          </sequence>
+        </target>
+      </iterate>
+    </inSequence>
+    <outSequence/>
+    <faultSequence/>
+  </target>
+</proxy>

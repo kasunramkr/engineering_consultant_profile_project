@@ -1,0 +1,53 @@
+<!--
+~   Copyright (c) 2005-2016, WSO2 Inc. (http://wso2.org) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+-->
+<!-- /.container -->
+<footer class="footer">
+  <div class="container-fluid">
+    <p>WSO2 <span class="hidden-xs">Engineering Consultant Profile </span>
+    <span class="visible-xs-inline-block">ECP</span> | &copy; <script>document.write(new Date().getFullYear());</script> <a href="http://wso2.com/" target="_blank"><i class="icon fw fw-wso2"></i> Inc</a>.</p>
+  </div>
+</footer>
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+<!-- jQuery (necessary for Bootstrap and WSO2 Theme JavaScript plugins) -->
+<script src="libs/jquery_1.11.0/jquery-1.11.3.min.js">
+</script>
+<script src="libs/select2_4.0.0/js/select2.full.min.js">
+</script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="libs/bootstrap_3.3.6/js/bootstrap.min.js">
+</script>
+<script src="js/theme-wso2.min.js">
+</script>
+ <!-- JS From pages -->
+<%
+        if(JS_LIBS && JS_LIBS.length > 0){
+            for (var i = 0 ; i < JS_LIBS.length ; i++){
+                %>
+        <script src="<%= JS_LIBS[i]%>"></script>
+                <%
+            }
+        }
+%>
+ <script type="text/javascript">
+    $("#breadCrumEmpName").text(getCookie("FULL_NAME"));
+ </script>
+</body>
+</html>

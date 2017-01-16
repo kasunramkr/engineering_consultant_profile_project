@@ -1,0 +1,91 @@
+<data name="getCodeReviewStatistics" transports="https">
+   <config enableOData="false" id="gmailDetails">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://localhost:3306/gmail_details</property>
+      <property name="username">root</property>
+      <property name="password">bcrugby</property>
+   </config>
+   <query id="getReviewCountByTeam" useConfig="gmailDetails">
+      <sql>select quater,count(mailId) as noOfReviews from code_review where team=? AND year=? group by quater</sql>
+      <result element="Entries" rowName="Entry">
+         <element column="quater" name="quater" xsdType="STRING"/>
+         <element column="noOfReviews" name="count" xsdType="int"/>
+      </result>
+      <param name="team" sqlType="STRING"/>
+      <param name="year" sqlType="STRING"/>
+   </query>
+   <operation name="getReviewCountByTeam">
+      <call-query href="getReviewCountByTeam">
+         <with-param name="team" query-param="team"/>
+         <with-param name="year" query-param="year"/>
+      </call-query>
+   </operation>
+   <query id="getReviewCountBySenderNormal" useConfig="gmailDetails">
+      <sql>select quater,count(mailId) as noOfReviews from code_review where sender=? AND year=? group by quater</sql>
+      <result element="Entries" rowName="Entry">
+         <element column="quater" name="quater" xsdType="STRING"/>
+         <element column="noOfReviews" name="count" xsdType="int"/>
+      </result>
+      <param name="sender" sqlType="STRING"/>
+      <param name="year" sqlType="STRING"/>
+   </query>
+   <operation name="getReviewCountBySenderNormal">
+      <call-query href="getReviewCountBySenderNormal">
+         <with-param name="sender" query-param="sender"/>
+         <with-param name="year" query-param="year"/>
+      </call-query>
+   </operation>
+   <query id="getReviewCountBySenderException" useConfig="gmailDetails">
+      <sql>select quater,count(mailId) as NoOfReviews from code_review_exception_list where sender=? AND year=? group by quater</sql>
+      <result element="Entries" rowName="Entry">
+         <element column="quater" name="quater" xsdType="STRING"/>
+         <element column="noOfReviews" name="count" xsdType="int"/>
+      </result>
+      <param name="sender" sqlType="STRING"/>
+      <param name="year" sqlType="STRING"/>
+   </query>
+   <operation name="getReviewCountBySenderException">
+      <call-query href="getReviewCountBySenderException">
+         <with-param name="sender" query-param="sender"/>
+         <with-param name="year" query-param="year"/>
+      </call-query>
+   </operation>
+   <query id="getCodeReviewList" useConfig="gmailDetails">
+      <sql>select date,team,sender,mailId from code_review_exception_list where sender=? UNION select date,team,sender,mailId from code_review where team=? OR sender=?</sql>
+      <result element="Entries" rowName="Entry">
+         <element column="date" name="date" xsdType="STRING"/>
+         <element column="team" name="team" xsdType="STRING"/>
+         <element column="sender" name="sender" xsdType="STRING"/>
+         <element column="mailId" name="mailId" xsdType="STRING"/>
+      </result>
+      <param name="sender" sqlType="STRING"/>
+      <param name="team" sqlType="STRING"/>
+      <param name="sender" sqlType="STRING"/>
+   </query>
+   <operation name="getCodeReviewList">
+      <call-query href="getCodeReviewList">
+         <with-param name="sender" query-param="sender"/>
+         <with-param name="team" query-param="team"/>
+      </call-query>
+   </operation>
+   <query id="getCodeReviewById" useConfig="gmailDetails">
+      <sql>SELECT * FROM (SELECT mailId,team,date,sender,participants,title,notes FROM code_review UNION SELECT mailId,team,date,sender,participants,title,notes FROM code_review_exception_list ) tempTable WHERE tempTable.mailId=?</sql>
+      <result element="Entries" rowName="Entry">
+         <element column="mailId" name="mailId" xsdType="STRING"/>
+         <element column="team" name="team" xsdType="STRING"/>
+         <element column="date" name="date" xsdType="STRING"/>
+         <element column="sender" name="sender" xsdType="STRING"/>
+         <element column="participants" name="participants" xsdType="STRING"/>
+         <element column="title" name="title" xsdType="STRING"/>
+         <element column="notes" name="notes" xsdType="STRING"/>
+      </result>
+      <param name="mailId" sqlType="STRING"/>
+   </query>
+   <operation name="getCodeReviewById">
+      <call-query href="getCodeReviewById">
+         <with-param name="mailId" query-param="mailId"/>
+      </call-query>
+   </operation>
+    <!--  <enableSec/>
+   <policy key="conf:security/engineeringprofilepolicy.xml"/> -->
+</data>

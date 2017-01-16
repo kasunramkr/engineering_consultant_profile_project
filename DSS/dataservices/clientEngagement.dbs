@@ -1,0 +1,31 @@
+<data name="clientEngagement" transports="https">
+   <description>Expose clientEngagement information to engineering profile app</description>
+   <config enableOData="false" id="allocationAppDB">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://192.168.56.212:3306/allocation_db_new?autoReconnect=true</property>
+      <property name="username">root</property>
+      <property name="password">password</property>
+   </config>
+   <query id="getclientEngagementList" useConfig="allocationAppDB">
+      <sql>SELECT location,customer_name,allocation_type.id,allocation.email,allocation_type.allocation_type,allocation.status,allocation.start_date,allocation.end_date,clearance_status FROM (allocation JOIN allocation_type ON allocation.allocation_type=allocation_type.id) JOIN engagement ON allocation.engagement_code=engagement.id WHERE allocation.email=:email and allocation.allocation_type IN (12,19,20,22,41,46)</sql>
+      <result outputType="json">{"Entries":{"Entry":[{"id":"$id","email":"$email","allocation_type":"$allocation_type","status":"$status","start_date":"$start_date","end_date":"$end_date","clearance_status":"$clearance_status","customer_name":"$customer_name","location":"$location"}]}}</result>
+      <param name="email" sqlType="STRING"/>
+   </query>
+   <resource method="GET" path="/allocationList/{email}">
+      <call-query href="getclientEngagementList">
+         <with-param name="email" query-param="email"/>
+      </call-query>
+   </resource>
+   <query id="getclientEngagementDetails" useConfig="allocationAppDB">
+      <sql>SELECT start_date,end_date,allocation.allocation_type as type FROM allocation JOIN allocation_type ON allocation.allocation_type=allocation_type.id WHERE allocation.email=:email and allocation.allocation_type IN (12,19,20,22,41,46)</sql>
+      <result outputType="json">{"Entries":{"Entry":[{"type":"$type","start_date":"$start_date","end_date":"$end_date"}]}}</result>
+      <param name="email" sqlType="STRING"/>
+   </query>
+   <resource method="GET" path="/allocationSummery/{email}">
+      <call-query href="getclientEngagementDetails">
+         <with-param name="email" query-param="email"/>
+      </call-query>
+   </resource>
+   <!-- <enableSec/>
+   <policy key="conf:security/engineeringprofilepolicy.xml"/> -->
+</data>

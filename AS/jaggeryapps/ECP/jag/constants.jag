@@ -1,0 +1,53 @@
+<%
+/*
+~   Copyright (c) 2005-2016, WSO2 Inc. (http://wso2.org) All Rights Reserved.
+~
+~   Licensed under the Apache License, Version 2.0 (the "License");
+~   you may not use this file except in compliance with the License.
+~   You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~   Unless required by applicable law or agreed to in writing, software
+~   distributed under the License is distributed on an "AS IS" BASIS,
+~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~   See the License for the specific language governing permissions and
+~   limitations under the License.
+*/
+var getAllEngineeringEmployeesURL = "https://192.168.56.212:9443/services/Dashboard_PeopleHR_DataService/getAllEngineeringEmployees";
+
+var codeReviewByMailIdURL  = "https://192.168.56.212:8245/CodeReviewStatisticsAPI/codeReviewByMailId/";
+var getCodeReviewStatisticsURL  = "https://192.168.56.212:8245/CodeReviewStatisticsAPI/getCodeReviewStatistics/";
+var getCodeReviewListURL  = "https://192.168.56.212:8245/CodeReviewStatisticsAPI/getCodeReviewList/";
+
+//var getLeaveSummaryURL = "https://192.168.56.212:8245/getLeaveSummary/test/";
+
+var getJiraAssignReportBugSummaryURL = "https://192.168.56.212:8245/getJiraBugSummary/";
+var getJiraResolvedBugSummaryURL = "https://192.168.56.212:8245/getJiraBugSummary/getLastResolvedJiraBugSummary/";
+
+//var getLatestQSPDetailsURL  = "https://192.168.56.212:8245/QSPDetailsAPI/getLatestQSPDetails/";
+//var getQSPDetailsListURL  = "https://192.168.56.212:8245/QSPDetailsAPI/getQSPDetailsList";
+//var getQSPDetailsURL  = "https://192.168.56.212:8245/QSPDetailsAPI/getQSPDetails";
+
+//var getSupportFeedbackListURL  = "http://192.168.56.212:9763/services/getSupportFeedbacks/getSupportFeedbackList";
+
+var visaURL  = "https://192.168.56.212:9443/services/EmployeeProfileDS/employee/visa/";
+
+var commitershipCheckbaseURL = "https://accounts.internal.wso2.com/admin/services/";
+var employeeGeneralDetailsURL = "https://192.168.56.212:9443/services/Dashboard_PeopleHR_DataService/employeeDetails/";
+var picasaGooglePlusPhotoURL = "http://picasaweb.google.com/data/entry/api/user/";
+
+var clientEngagementWeeksURL= "https://192.168.56.212:9443/services/clientEngagement/allocationSummery/";
+var clientEngagementListURL= "https://192.168.56.212:9443/services/clientEngagement/allocationList/";
+
+var allocationDetailsURL = "https://192.168.56.212:9443/services/Dasboard_RotationalAllocation_DataService/engineering/allocations/";
+var rotationDetailsURL = "https://192.168.56.212:9443/services/Dasboard_RotationalAllocation_DataService/engineering/rotations/";
+
+var getLastSeenLocationURL = "https://192.168.56.212:9443/services/getLastSeenLocation/location/";
+
+var ESB_HEADERS = {"Authorization": "Bearer YWRtaW46YWRtaW4="};
+var DSS_HEADERS = {"Accept": "application/json","Authorization": "Basic YWRtaW46YWRtaW4="};
+%>
+
+
+

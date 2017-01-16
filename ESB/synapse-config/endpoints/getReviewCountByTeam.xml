@@ -1,0 +1,3 @@
+<endpoint xmlns="http://ws.apache.org/ns/synapse" name="getReviewCountByTeam">
+   <http method="POST" uri-template="https://192.168.56.212:9443/services/getCodeReviewStatistics/getReviewCountByTeam"/>
+</endpoint>
